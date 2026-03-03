@@ -1,667 +1,1312 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>会议录音分析助手</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<title>玄机 Bash · 添加好友交互原型</title>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+body {
+  background: linear-gradient(145deg,#DCDCE8,#C8C8DC);
+  font-family: -apple-system,"PingFang SC","Helvetica Neue",sans-serif;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 28px 16px 40px;
+  -webkit-font-smoothing: antialiased;
+}
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-            height: calc(100vh - 40px);
-        }
+.header { text-align:center; margin-bottom:20px; }
+.header h1 { font-size:18px; font-weight:700; color:#1C1C1E; }
+.header p  { font-size:12px; color:#8E8E93; margin-top:4px; }
 
-        /* 左侧配置区 */
-        .config-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            overflow-y: auto;
-        }
+/* ── 两部手机并排 ── */
+.phones-row { display:flex; gap:52px; align-items:flex-start; }
 
-        .config-section {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+.phone-wrap { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.phone-label {
+  font-size:12px; font-weight:600; color:#555;
+  background:#fff; padding:4px 14px; border-radius:20px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.1);
+}
 
-        .config-section label {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
+/* ── 手机壳 ── */
+.phone {
+  width:304px; height:648px;
+  background:#161616; border-radius:48px; padding:13px;
+  box-shadow: 0 28px 72px rgba(0,0,0,0.45),
+              0 0 0 1px rgba(255,255,255,0.07),
+              inset 0 1px 0 rgba(255,255,255,0.12);
+  position:relative; overflow:hidden; flex-shrink:0;
+}
+.phone::before {
+  content:''; position:absolute; left:-3px; top:118px;
+  width:3px; height:58px; background:#2A2A2A; border-radius:2px 0 0 2px;
+  box-shadow: 0 68px 0 #2A2A2A;
+}
+.phone::after {
+  content:''; position:absolute; right:-3px; top:158px;
+  width:3px; height:88px; background:#2A2A2A; border-radius:0 2px 2px 0;
+}
 
-        .config-section input {
-            padding: 10px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
+/* ── 灵动岛 ── */
+.di {
+  position:absolute; top:15px; left:50%; transform:translateX(-50%);
+  width:112px; height:34px; background:#000; border-radius:20px;
+  z-index:300; overflow:hidden; cursor:pointer;
+  transition: width .45s cubic-bezier(.34,1.56,.64,1),
+              height .45s cubic-bezier(.34,1.56,.64,1),
+              border-radius .45s;
+  display:flex; align-items:center; justify-content:center;
+}
+.di.open { width:268px; height:64px; border-radius:28px; }
 
-        .config-section input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+.di-body { display:none; align-items:center; gap:10px; padding:0 14px; width:100%; }
+.di-body.show { display:flex; }
+.di-ico {
+  width:38px; height:38px; border-radius:11px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:19px;
+}
+.di-txt .di-t1 { font-size:11px; font-weight:700; color:#fff; white-space:nowrap; }
+.di-txt .di-t2 { font-size:10px; color:rgba(255,255,255,.6); margin-top:2px; white-space:nowrap; }
 
-        /* 音频上传区 */
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 12px;
-            padding: 40px 20px;
-            text-align: center;
-            background: #f8f9ff;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            user-select: none;
-        }
+/* ── 屏幕 ── */
+.screen {
+  width:100%; height:100%; background:#fff; border-radius:36px;
+  overflow:hidden; display:flex; flex-direction:column; position:relative;
+}
 
-        .upload-area:hover {
-            border-color: #764ba2;
-            background: #f0f2ff;
-        }
+/* 状态栏 */
+.sbar {
+  height:44px; padding:12px 20px 0;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:11.5px; font-weight:600; color:#1C1C1E; flex-shrink:0;
+  background:#fff; position:relative; z-index:10;
+}
+.sbar-r { display:flex; gap:3px; align-items:center; font-size:10px; }
 
-        .upload-area.dragover {
-            border-color: #764ba2;
-            background: #e8ebff;
-            transform: scale(1.02);
-        }
+/* 导航栏 */
+.nbar {
+  height:46px; padding:0 16px; border-bottom:0.5px solid #f0f0f0;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-shrink:0; background:#fff; position:relative; z-index:10;
+}
+.nbar-ic { font-size:20px; color:#555; width:30px; text-align:center; cursor:pointer; user-select:none; }
+.nbar-tt { font-size:16px; font-weight:600; color:#1a1a1a; }
+.nbar-right { display:flex; gap:2px; align-items:center; font-size:13px; color:#666; cursor:pointer; }
 
-        .upload-icon {
-            font-size: 48px;
-            color: #667eea;
-        }
+/* ─────────────────────────────────────
+   首页（prototype.html 风格）
+───────────────────────────────────── */
+.home-content {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:0 24px; gap:22px; background:#fff;
+}
+.home-logo {
+  width:62px; height:62px; border-radius:18px;
+  background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);
+  display:flex; align-items:center; justify-content:center;
+}
+.home-logo .inner { width:28px; height:28px; background:#fff; border-radius:50%; }
+.home-slogan { font-size:20px; font-weight:600; color:#1a1a1a; }
+.home-actions { display:flex; flex-direction:column; gap:10px; width:100%; }
+.home-action {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; background:#f8f9fa; border-radius:12px;
+  cursor:pointer; font-size:15px; color:#333;
+  border:none; width:100%; text-align:left; transition:opacity .1s;
+}
+.home-action:active { opacity:.7; }
+.home-action .hico {
+  width:30px; height:30px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff;
+}
+.home-action.friend {
+  background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.07));
+  border:1.5px solid rgba(102,126,234,.25);
+}
 
-        .upload-text {
-            color: #666;
-            font-size: 14px;
-        }
+/* 首页底部输入 */
+.home-input {
+  padding:10px 16px 22px; background:#fff; border-top:0.5px solid #eee;
+  display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+.home-input .hi-plus {
+  width:28px; height:28px; border-radius:50%; border:1.5px solid #ccc;
+  display:flex; align-items:center; justify-content:center;
+  color:#999; font-size:17px; flex-shrink:0; cursor:pointer;
+}
+.home-input .hi-inp {
+  flex:1; background:#f5f5f5; border-radius:18px; padding:8px 14px;
+  font-size:13px; color:#AEAEB2; cursor:pointer;
+}
+.home-input .hi-mic { font-size:19px; color:#999; }
 
-        .file-info {
-            margin-top: 12px;
-            padding: 12px;
-            background: #e8f5e9;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #2e7d32;
-            display: none;
-        }
+/* 首页键盘展开时，内容区改为从顶部滚动 */
+.home-content.kopen {
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding-top: 20px;
+  padding-bottom: 268px; /* 避免内容被键盘遮住 */
+}
 
-        .file-info.show {
-            display: block;
-        }
+/* ─────────────────────────────────────
+   侧边栏
+───────────────────────────────────── */
+.sb-ov {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.38); z-index:50;
+  opacity:0; pointer-events:none; transition:opacity .28s;
+}
+.sb-ov.show { opacity:1; pointer-events:auto; }
 
-        /* 按钮 */
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
+.sidebar {
+  position:absolute; top:0; left:0; width:80%; height:100%;
+  background:#fff; z-index:60;
+  transform:translateX(-100%); transition:transform .3s ease;
+  display:flex; flex-direction:column;
+  border-radius:0 16px 16px 0;
+}
+.sidebar.show { transform:translateX(0); }
 
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
+.sb-head {
+  padding:50px 18px 14px; display:flex; align-items:center;
+  justify-content:space-between; border-bottom:0.5px solid #f0f0f0;
+}
+.sb-head h2 { font-size:22px; font-weight:700; color:#1a1a1a; }
+.sb-add-btn {
+  width:34px; height:34px; border-radius:50%; background:#007AFF;
+  color:#fff; display:flex; align-items:center; justify-content:center;
+  font-size:20px; cursor:pointer; flex-shrink:0;
+}
+.sb-search {
+  margin:10px 16px; height:34px; background:#f5f5f5; border-radius:10px;
+  display:flex; align-items:center; padding:0 12px; gap:8px;
+  color:#999; font-size:13px;
+}
+.sb-list { flex:1; overflow-y:auto; }
+.sb-item {
+  display:flex; align-items:center; padding:11px 16px; gap:11px; cursor:pointer;
+}
+.sb-item:active { background:#f5f5f5; }
+.sb-item.pinned { background:#f0f5ff; }
+.sb-av {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; font-weight:600;
+}
+.sb-av.bot { background:linear-gradient(135deg,#007AFF,#5856D6); color:#fff; font-size:17px; }
+.sb-av.usr { background:#e8e8e8; color:#666; }
+.sb-info { flex:1; min-width:0; }
+.sb-name { font-size:15px; font-weight:500; color:#1a1a1a; display:flex; align-items:center; gap:5px; }
+.sb-pin { font-size:10px; color:#007AFF; border:1px solid #007AFF; border-radius:4px; padding:1px 4px; }
+.sb-last { font-size:12px; color:#999; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sb-badge { width:18px; height:18px; border-radius:50%; background:#FF3B30; color:#fff; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+.sb-foot { padding:12px 16px 24px; border-top:0.5px solid #eee; }
+.sb-req-row { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:#333; cursor:pointer; padding:6px 0; }
+.sb-req-dot { width:8px; height:8px; border-radius:50%; background:#FF3B30; }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+/* ── 对话界面 ── */
+.chat-body { flex:1; overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:10px; background:#f5f5f5; }
 
-        .btn-secondary {
-            background: #6c757d;
-            margin-top: 8px;
-        }
+.mrow { display:flex; align-items:flex-end; gap:7px; }
+.mrow.me { flex-direction:row-reverse; }
 
-        /* 右侧结果区 */
-        .result-panel {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            position: relative;
-        }
+.mav {
+  width:28px; height:28px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff;
+}
+.mav.xj { background:linear-gradient(135deg,#007AFF,#5856D6); }
+.mav.ua { background:linear-gradient(135deg,#FF6B6B,#FF8E53); }
+.mav.ub { background:linear-gradient(135deg,#34C759,#28A745); }
 
-        .result-header {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
-        }
+.bbl {
+  max-width:200px; padding:9px 13px; border-radius:18px;
+  font-size:13px; line-height:1.55; background:#fff; color:#1C1C1E;
+  box-shadow:0 1px 3px rgba(0,0,0,.07);
+}
+.mrow.me .bbl {
+  background:#007AFF; color:#fff; border-top-right-radius:4px;
+}
+.mrow:not(.me) .bbl { border-top-left-radius:4px; }
+.bbl.wait { background:rgba(255,200,0,.1); border:1.5px solid rgba(255,200,0,.3); }
+.bbl.succ { background:rgba(52,199,89,.08); border:1.5px solid rgba(52,199,89,.28); }
 
-        .result-content {
-            line-height: 1.8;
-            color: #333;
-        }
+/* 输入卡（A端：引导输入手机号） */
+.inp-card {
+  background:#fff; border-radius:14px; padding:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.09); max-width:192px;
+}
+.inp-card-lbl { font-size:10px; color:#AEAEB2; margin-bottom:7px; }
+.inp-card-box {
+  background:#F2F2F7; border-radius:9px; padding:9px 11px;
+  font-size:15px; font-weight:500; color:#1C1C1E; letter-spacing:.5px;
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:9px; min-height:38px;
+}
+.inp-card-box span { flex:1; word-break:break-all; }
+.cursor { width:2px; height:17px; background:#007AFF; flex-shrink:0; animation:blink 1s infinite; }
+@keyframes blink { 0%,50%{opacity:1} 51%,100%{opacity:0} }
+.inp-card-hint { font-size:10px; color:#AEAEB2; margin-bottom:8px; }
 
-        .result-content h1,
-        .result-content h2,
-        .result-content h3 {
-            margin-top: 24px;
-            margin-bottom: 12px;
-            color: #667eea;
-        }
+/* 确认用户卡 */
+.confirm-card {
+  background:#fff; border-radius:14px; padding:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.09); max-width:196px;
+}
+.cc-row { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+.cc-av {
+  width:38px; height:38px; border-radius:50%;
+  background:linear-gradient(135deg,#FF6B6B,#FF8E53);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:15px; font-weight:700; flex-shrink:0;
+}
+.cc-name { font-size:13px; font-weight:600; color:#1C1C1E; }
+.cc-id   { font-size:10px; color:#AEAEB2; margin-top:2px; }
+.cc-btns { display:flex; gap:7px; }
+.btn-send {
+  flex:1; background:#007AFF; color:#fff; border:none;
+  border-radius:20px; padding:9px 0; font-size:12px; font-weight:600; cursor:pointer;
+}
+.btn-cancel {
+  flex:1; background:#f5f5f5; color:#8E8E93; border:none;
+  border-radius:20px; padding:9px 0; font-size:12px; cursor:pointer;
+}
 
-        .result-content h1 {
-            font-size: 28px;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 8px;
-        }
+/* 好友申请卡（B端） */
+.req-card {
+  background:#fff; border-radius:14px; padding:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.09); max-width:196px;
+}
+.rc-row { display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+.rc-av {
+  width:38px; height:38px; border-radius:50%;
+  background:linear-gradient(135deg,#FF6B6B,#FF8E53);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:15px; font-weight:700; flex-shrink:0;
+}
+.rc-name { font-size:13px; font-weight:600; color:#1C1C1E; }
+.rc-id   { font-size:10px; color:#AEAEB2; margin-top:2px; }
+.rc-note {
+  font-size:11px; color:#636366; background:#F2F2F7;
+  border-radius:8px; padding:7px 9px; margin-bottom:9px;
+}
+.rc-btns { display:flex; gap:7px; }
+.btn-ok  {
+  flex:1; background:#007AFF; color:#fff; border:none;
+  border-radius:20px; padding:9px 0; font-size:12px; font-weight:600; cursor:pointer;
+}
+.btn-no {
+  flex:1; background:#f5f5f5; color:#8E8E93; border:none;
+  border-radius:20px; padding:9px 0; font-size:12px; cursor:pointer;
+}
 
-        .result-content h2 {
-            font-size: 24px;
-        }
+/* ── 好友请求列表页 ── */
+.fr-body { flex:1; padding:16px; overflow-y:auto; background:#fff; }
+.fr-sec-title { font-size:13px; color:#999; margin:16px 0 8px; }
+.fr-sec-title:first-child { margin-top:0; }
+.fr-card {
+  background:#fff; border-radius:14px; padding:16px;
+  box-shadow:0 1px 6px rgba(0,0,0,.06); margin-bottom:12px;
+  border:0.5px solid #f0f0f0;
+}
+.fr-card .fr-user { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.fr-card .fr-user .fr-av {
+  width:40px; height:40px; border-radius:50%;
+  background:#e8e8e8; display:flex; align-items:center; justify-content:center;
+  font-size:15px; color:#666; font-weight:600; flex-shrink:0;
+}
+.fr-card .fr-user .fr-info { flex:1; }
+.fr-card .fr-user .fr-name { font-size:15px; font-weight:500; color:#1a1a1a; }
+.fr-card .fr-user .fr-phone { font-size:12px; color:#999; margin-top:2px; }
+.fr-card .fr-msg {
+  background:#f5f5f5; border-radius:8px; padding:9px 11px;
+  font-size:13px; color:#555; margin-bottom:12px;
+}
+.fr-card .fr-btns { display:flex; gap:10px; justify-content:flex-end; }
+.fr-card .fr-btns button {
+  padding:7px 22px; border-radius:18px; font-size:13px;
+  font-weight:500; cursor:pointer; border:none;
+}
+.fr-card .fr-btns .fr-reject { background:#f5f5f5; color:#666; }
+.fr-card .fr-btns .fr-accept { background:#007AFF; color:#fff; }
+.fr-processed {
+  display:flex; align-items:center; gap:10px; padding:10px 0;
+  border-bottom:0.5px solid #f5f5f5;
+}
+.fr-processed .frp-av {
+  width:32px; height:32px; border-radius:50%; background:#e8e8e8;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:#666; font-weight:600; flex-shrink:0;
+}
+.fr-processed .frp-name { font-size:14px; color:#333; }
+.fr-processed .frp-status { font-size:12px; margin-left:auto; }
+.fr-processed .frp-status.accepted { color:#34C759; }
+.fr-processed .frp-status.rejected { color:#999; }
 
-        .result-content h3 {
-            font-size: 20px;
-        }
+/* 对话底部输入栏 */
+.chat-ibar {
+  padding:10px 14px 22px; background:#fff; border-top:0.5px solid #eee;
+  display:flex; align-items:center; gap:8px; flex-shrink:0;
+}
+.chat-ibar-plus {
+  width:28px; height:28px; border-radius:50%; border:1.5px solid #ccc;
+  display:flex; align-items:center; justify-content:center;
+  color:#999; font-size:16px; flex-shrink:0;
+}
+.chat-input-wrap {
+  flex:1; background:#f5f5f5; border-radius:18px;
+  padding:0 12px; display:flex; align-items:center; min-height:34px;
+}
+.chat-input-real {
+  flex:1; border:none; outline:none; font-size:13px;
+  color:#1C1C1E; background:transparent; padding:6px 0; font-family:inherit;
+}
+.chat-input-real::placeholder { color:#AEAEB2; }
+.chat-send {
+  width:28px; height:28px; border-radius:50%; background:#007AFF;
+  border:none; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:13px; cursor:pointer; flex-shrink:0; transition:transform .1s;
+}
+.chat-send:active { transform:scale(.9); }
+.chat-send:disabled { background:#C7C7CC; cursor:default; }
+.chat-ibar-mic { font-size:19px; color:#999; }
 
-        .result-content ul,
-        .result-content ol {
-            margin-left: 24px;
-            margin-bottom: 16px;
-        }
+/* 屏幕层切换 */
+.view { display:none; flex-direction:column; height:100%; }
+.view.on { display:flex; }
 
-        .result-content li {
-            margin-bottom: 8px;
-        }
+/* ── iOS 风格键盘基础 ── */
+.kbd-overlay {
+  position:absolute; bottom:0; left:0; right:0;
+  height:0; background:#CDD0D6;
+  transition:height .25s ease; z-index:20; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+/* QWERTY 全键盘（含顶部输入行） */
+.kbd-overlay.show { height:262px; }
+/* 拨号数字盘 */
+.kbd-overlay.np-kbd.show { height:262px; }
 
-        .result-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
+/* 键盘顶部输入框行（仅 QWERTY 使用） */
+.kbd-inp-row {
+  padding:6px 10px 5px; background:#f1f2f3;
+  border-bottom:0.5px solid #b4b7bd;
+  display:flex; align-items:center; gap:8px; flex-shrink:0;
+}
+.kbd-inp-row input {
+  flex:1; background:#fff; border-radius:10px;
+  border:none; outline:none; padding:6px 12px;
+  font-size:14px; font-family:inherit; color:#1C1C1E;
+  box-shadow:0 0 0 1px rgba(0,0,0,.08);
+}
+.kbd-inp-row .kbd-go {
+  width:30px; height:30px; border-radius:50%;
+  background:#007AFF; border:none; color:#fff;
+  font-size:14px; cursor:pointer; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.kbd-inp-row .kbd-go:active { background:#0060cc; }
 
-        .result-content table th,
-        .result-content table td {
-            padding: 12px;
-            text-align: left;
-            border: 1px solid #e0e0e0;
-        }
+/* ── QWERTY 键行区域 ── */
+.qw-rows { padding:7px 3px 0; flex:1; }
+.qw-row  { display:flex; justify-content:center; gap:5px; margin-bottom:9px; }
+.qw-row2 { padding:0 13px; } /* ASDFGHJKL 行两侧内缩 */
 
-        .result-content table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-        }
+/* 标准字母键：白色 + 底部阴影（iOS 3D 感） */
+.qk {
+  flex:1; height:43px; min-width:0;
+  background:#fff; border-radius:5px; border:none;
+  font-size:17px; font-weight:400; color:#000;
+  cursor:pointer; box-shadow:0 1px 0 rgba(0,0,0,.38);
+  display:flex; align-items:center; justify-content:center;
+  user-select:none; -webkit-tap-highlight-color:transparent;
+}
+.qk:active { background:#9EA5B0; box-shadow:none; }
 
-        .result-content table tr:nth-child(even) {
-            background: #f8f9ff;
-        }
+/* 特殊键：深灰背景（Shift / Del / 123 等） */
+.qk.sp { background:#ACB3BE; }
+.qk.sp:active { background:#858C98; }
 
-        .result-content table tr:hover {
-            background: #f0f2ff;
-        }
+/* Shift 激活态：变白色（表示大写锁定） */
+.qk.sp.shifted { background:#fff; }
 
-        .result-content input[type="checkbox"] {
-            margin-right: 8px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
+/* 空格键 */
+.qk.spc { font-size:13px; color:#444; }
 
-        .result-content blockquote {
-            border-left: 4px solid #667eea;
-            padding-left: 16px;
-            margin: 16px 0;
-            color: #666;
-            font-style: italic;
-        }
+/* 换行 / 发送键 */
+.qk.ret { background:#ACB3BE; font-size:13px; }
+.qk.ret:active { background:#858C98; }
 
-        .result-content code {
-            background: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-
-        .result-content pre {
-            background: #f4f4f4;
-            padding: 16px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 16px 0;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #667eea;
-        }
-
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
-        }
-
-        .error {
-            background: #ffebee;
-            color: #c62828;
-            padding: 16px;
-            border-radius: 8px;
-            margin: 16px 0;
-            border-left: 4px solid #c62828;
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
+/* ── 手机拨号盘（chat 界面）── */
+.np-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:9px 8px; padding:10px 10px 10px; flex:1;
+}
+.npk {
+  background:#fff; border-radius:10px; border:none;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.22);
+  user-select:none; -webkit-tap-highlight-color:transparent;
+  min-height:0;
+}
+.npk:active { background:#c8ccd3; box-shadow:none; }
+.npk .nm { font-size:25px; font-weight:300; color:#000; line-height:1.1; }
+.npk .ns { font-size:8px; color:#8E8E93; letter-spacing:1.5px; margin-top:1px; }
+.npk.sp { background:#ACB3BE; }
+.npk.sp:active { background:#858C98; }
+.npk.act { background:#007AFF; }
+.npk.act:active { background:#0060cc; }
+.npk.act .nm { color:#fff; font-size:16px; font-weight:600; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- 左侧配置区 -->
-        <div class="config-panel">
-            <div class="config-section" style="display: none;">
-                <label for="apiKey">🔑 Gemini API Key</label>
-                <input type="password" id="apiKey" placeholder="请输入您的 API Key">
-            </div>
 
-            <div class="config-section">
-                <label>📁 上传音频文件</label>
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">🎤</div>
-                    <div class="upload-text">
-                        <strong>拖拽音频文件到此处</strong><br>
-                        或点击选择文件
-                    </div>
-                    <input type="file" id="fileInput" accept="audio/*" style="display: none;">
+<div class="header">
+  <h1>玄机 Bash · 添加好友交互原型</h1>
+  <p>直接在输入框打字，体验完整流程 · 支持任意手机号或 ID（B的手机号是 1111）</p>
+</div>
+
+<div class="phones-row">
+
+  <!-- ══════════ 手机 A ══════════ -->
+  <div class="phone-wrap">
+    <div class="phone-label">📱 设备 A（发起方）</div>
+    <div class="phone" id="phoneA">
+
+      <div class="di" id="diA" onclick="closeDI('A')">
+        <div class="di-body" id="diA-body"></div>
+      </div>
+
+      <div class="screen">
+
+        <!-- A-home -->
+        <div class="view on" id="A-home">
+          <div class="sbar">
+            <span id="timeA">12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="toggleSidebar('A')">☰</div>
+            <div class="nbar-tt">玄机 Bash</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="home-content">
+            <div class="home-logo"><div class="inner"></div></div>
+            <div class="home-slogan">拈花一笑，且问玄机</div>
+            <div class="home-actions">
+              <button class="home-action" onclick="aEnterChat('calendar')">
+                <div class="hico" style="background:#007AFF">📅</div>查日程
+              </button>
+              <button class="home-action" onclick="aEnterChat('sms')">
+                <div class="hico" style="background:#34C759">💬</div>发短信
+              </button>
+              <button class="home-action" onclick="aEnterChat('weather')">
+                <div class="hico" style="background:#5AC8FA">🌤</div>查天气
+              </button>
+              <button class="home-action" onclick="aEnterChat('contacts')">
+                <div class="hico" style="background:#007AFF">👤</div>查联系人
+              </button>
+              <button class="home-action friend" onclick="aStartAddFriend()">
+                <div class="hico" style="background:linear-gradient(135deg,#667eea,#764ba2)">🤝</div>添加好友
+              </button>
+            </div>
+          </div>
+          <div class="home-input">
+            <div class="hi-plus">+</div>
+            <div class="hi-inp" onclick="aHomeInputClick()">拈花一笑，且问玄机...</div>
+            <div class="hi-mic">🎙</div>
+          </div>
+          <!-- 首页键盘（QWERTY） -->
+          <div class="kbd-overlay" id="A-home-kbd">
+            <!-- 输入框行 -->
+            <div class="kbd-inp-row">
+              <input id="A-home-input" type="text" inputmode="none"
+                placeholder="拈花一笑，且问玄机..."
+                onkeydown="if(event.key==='Enter')aHomeSend()">
+              <button class="kbd-go" onclick="aHomeSend()">➤</button>
+            </div>
+            <!-- 字母视图 -->
+            <div id="A-qwerty-alpha" class="qw-rows">
+              <div class="qw-row">
+                <button class="qk" onclick="aKbdType('q')" data-k="q">q</button>
+                <button class="qk" onclick="aKbdType('w')" data-k="w">w</button>
+                <button class="qk" onclick="aKbdType('e')" data-k="e">e</button>
+                <button class="qk" onclick="aKbdType('r')" data-k="r">r</button>
+                <button class="qk" onclick="aKbdType('t')" data-k="t">t</button>
+                <button class="qk" onclick="aKbdType('y')" data-k="y">y</button>
+                <button class="qk" onclick="aKbdType('u')" data-k="u">u</button>
+                <button class="qk" onclick="aKbdType('i')" data-k="i">i</button>
+                <button class="qk" onclick="aKbdType('o')" data-k="o">o</button>
+                <button class="qk" onclick="aKbdType('p')" data-k="p">p</button>
+              </div>
+              <div class="qw-row qw-row2">
+                <button class="qk" onclick="aKbdType('a')" data-k="a">a</button>
+                <button class="qk" onclick="aKbdType('s')" data-k="s">s</button>
+                <button class="qk" onclick="aKbdType('d')" data-k="d">d</button>
+                <button class="qk" onclick="aKbdType('f')" data-k="f">f</button>
+                <button class="qk" onclick="aKbdType('g')" data-k="g">g</button>
+                <button class="qk" onclick="aKbdType('h')" data-k="h">h</button>
+                <button class="qk" onclick="aKbdType('j')" data-k="j">j</button>
+                <button class="qk" onclick="aKbdType('k')" data-k="k">k</button>
+                <button class="qk" onclick="aKbdType('l')" data-k="l">l</button>
+              </div>
+              <div class="qw-row">
+                <button class="qk sp" style="flex:0 0 36px" id="A-shift-btn" onclick="aKbdShift()">⇧</button>
+                <button class="qk" onclick="aKbdType('z')" data-k="z">z</button>
+                <button class="qk" onclick="aKbdType('x')" data-k="x">x</button>
+                <button class="qk" onclick="aKbdType('c')" data-k="c">c</button>
+                <button class="qk" onclick="aKbdType('v')" data-k="v">v</button>
+                <button class="qk" onclick="aKbdType('b')" data-k="b">b</button>
+                <button class="qk" onclick="aKbdType('n')" data-k="n">n</button>
+                <button class="qk" onclick="aKbdType('m')" data-k="m">m</button>
+                <button class="qk sp" style="flex:0 0 36px" onclick="aKbdDel()">⌫</button>
+              </div>
+              <div class="qw-row">
+                <button class="qk sp" style="flex:0 0 44px;font-size:12px" onclick="aKbdToNum()">123</button>
+                <button class="qk spc" onclick="aKbdType(' ')">空格</button>
+                <button class="qk ret" style="flex:0 0 44px" onclick="aHomeSend()">换行</button>
+              </div>
+            </div>
+            <!-- 数字/符号视图 -->
+            <div id="A-qwerty-num" class="qw-rows" style="display:none">
+              <div class="qw-row">
+                <button class="qk" onclick="aKbdType('1')">1</button>
+                <button class="qk" onclick="aKbdType('2')">2</button>
+                <button class="qk" onclick="aKbdType('3')">3</button>
+                <button class="qk" onclick="aKbdType('4')">4</button>
+                <button class="qk" onclick="aKbdType('5')">5</button>
+                <button class="qk" onclick="aKbdType('6')">6</button>
+                <button class="qk" onclick="aKbdType('7')">7</button>
+                <button class="qk" onclick="aKbdType('8')">8</button>
+                <button class="qk" onclick="aKbdType('9')">9</button>
+                <button class="qk" onclick="aKbdType('0')">0</button>
+              </div>
+              <div class="qw-row">
+                <button class="qk" onclick="aKbdType('-')">-</button>
+                <button class="qk" onclick="aKbdType('/')">/</button>
+                <button class="qk" onclick="aKbdType(':')">:</button>
+                <button class="qk" onclick="aKbdType(';')">;</button>
+                <button class="qk" onclick="aKbdType('(')">(</button>
+                <button class="qk" onclick="aKbdType(')')">)</button>
+                <button class="qk" onclick="aKbdType('¥')">¥</button>
+                <button class="qk" onclick="aKbdType('@')">@</button>
+                <button class="qk" onclick="aKbdType('.')">.</button>
+                <button class="qk" onclick="aKbdType(',')">,</button>
+              </div>
+              <div class="qw-row">
+                <button class="qk sp" style="flex:0 0 36px;font-size:11px">#+:</button>
+                <button class="qk" onclick="aKbdType('?')">?</button>
+                <button class="qk" onclick="aKbdType('!')">!</button>
+                <button class="qk" onclick="aKbdType('~')">~</button>
+                <button class="qk" onclick="aKbdType('_')">_</button>
+                <button class="qk" onclick="aKbdType('&amp;')">&amp;</button>
+                <button class="qk" onclick="aKbdType('`')">`</button>
+                <button class="qk sp" style="flex:0 0 36px" onclick="aKbdDel()">⌫</button>
+              </div>
+              <div class="qw-row">
+                <button class="qk sp" style="flex:0 0 44px;font-size:12px" onclick="aKbdToAlpha()">ABC</button>
+                <button class="qk spc" onclick="aKbdType(' ')">空格</button>
+                <button class="qk ret" style="flex:0 0 44px" onclick="aHomeSend()">换行</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- A-chat -->
+        <div class="view" id="A-chat">
+          <div class="sbar">
+            <span id="timeA2">12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="aGoHome()" style="font-size:22px">‹</div>
+            <div class="nbar-tt">玄机 Bash</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="chat-body" id="A-msgs"></div>
+          <div class="chat-ibar">
+            <div class="chat-ibar-plus">+</div>
+            <div class="chat-input-wrap">
+              <input id="A-chat-input" class="chat-input-real" type="text" inputmode="none"
+                placeholder="输入手机号或 ID…"
+                onkeydown="if(event.key==='Enter')aChatSend()"
+                oninput="syncCardInput(this.value)">
+              <button class="chat-send" id="A-send-btn" onclick="aChatSend()">➤</button>
+            </div>
+            <div class="chat-ibar-mic">🎙</div>
+          </div>
+          <!-- 对话键盘（手机拨号盘） -->
+          <div class="kbd-overlay np-kbd" id="A-chat-kbd">
+            <div class="np-grid">
+              <button class="npk" onclick="aChatKbd(1)">
+                <span class="nm">1</span><span class="ns">&nbsp;</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(2)">
+                <span class="nm">2</span><span class="ns">ABC</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(3)">
+                <span class="nm">3</span><span class="ns">DEF</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(4)">
+                <span class="nm">4</span><span class="ns">GHI</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(5)">
+                <span class="nm">5</span><span class="ns">JKL</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(6)">
+                <span class="nm">6</span><span class="ns">MNO</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(7)">
+                <span class="nm">7</span><span class="ns">PQRS</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(8)">
+                <span class="nm">8</span><span class="ns">TUV</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(9)">
+                <span class="nm">9</span><span class="ns">WXYZ</span>
+              </button>
+              <button class="npk sp" onclick="aChatKbdDel()">
+                <span class="nm" style="font-size:22px">⌫</span>
+              </button>
+              <button class="npk" onclick="aChatKbd(0)">
+                <span class="nm">0</span><span class="ns">+</span>
+              </button>
+              <button class="npk act" onclick="aChatSend()">
+                <span class="nm">发送</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- A-req-list：好友请求列表 -->
+        <div class="view" id="A-req-list">
+          <div class="sbar">
+            <span>12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="aGoHome()" style="font-size:22px">‹</div>
+            <div class="nbar-tt">好友请求</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="fr-body">
+            <div class="fr-sec-title" id="fr-pending-label">待处理</div>
+            <div class="fr-card" id="fr-card-zhangwei">
+              <div class="fr-user">
+                <div class="fr-av">张</div>
+                <div class="fr-info">
+                  <div class="fr-name">老张</div>
+                  <div class="fr-phone">138****5678</div>
                 </div>
-                <div class="file-info" id="fileInfo"></div>
+              </div>
+              <div class="fr-msg">我是老张，加个好友方便联系</div>
+              <div class="fr-btns">
+                <button class="fr-reject" onclick="frHandle('zhangwei','reject')">拒绝</button>
+                <button class="fr-accept" onclick="frHandle('zhangwei','accept')">同意</button>
+              </div>
             </div>
-
-            <button class="btn" id="analyzeBtn" disabled>🚀 开始解析</button>
-            <button class="btn btn-secondary" id="clearBtn">🗑️ 清空</button>
+            <div class="fr-sec-title" id="fr-processed-label">已处理</div>
+            <div id="fr-processed-list">
+              <div class="fr-processed">
+                <div class="frp-av">李</div>
+                <div class="frp-name">小李</div>
+                <div class="frp-status accepted">已同意 · 3月1日</div>
+              </div>
+              <div class="fr-processed">
+                <div class="frp-av">赵</div>
+                <div class="frp-name">小赵</div>
+                <div class="frp-status rejected">已拒绝 · 2月28日</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- 右侧结果区 -->
-        <div class="result-panel">
-            <div class="result-header">📋 会议纪要</div>
-            <div class="result-content" id="resultContent">
-                <p style="color: #999; text-align: center; padding: 40px;">
-                    请上传音频文件，然后点击"开始解析"
-                </p>
+        <!-- A-ext-chat：联系人对话 -->
+        <div class="view" id="A-ext-chat">
+          <div class="sbar">
+            <span id="timeA3">12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="toggleSidebar('A')">☰</div>
+            <div class="nbar-tt" id="A-ext-title">小王</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="chat-body" id="A-ext-msgs"></div>
+          <div class="chat-ibar">
+            <div class="chat-ibar-plus">+</div>
+            <div class="chat-input-wrap">
+              <input class="chat-input-real" type="text" inputmode="none" placeholder="拈花一笑，且问玄机...">
+              <button class="chat-send" disabled>➤</button>
             </div>
+            <div class="chat-ibar-mic">🎙</div>
+          </div>
         </div>
+
+        <!-- 侧边栏 A -->
+        <div class="sb-ov" id="A-sb-ov" onclick="toggleSidebar('A')"></div>
+        <div class="sidebar" id="A-sidebar">
+          <div class="sb-head">
+            <h2>对话</h2>
+            <div class="sb-add-btn" onclick="aStartAddFriend();toggleSidebar('A')">+</div>
+          </div>
+          <div class="sb-search">🔍 搜索对话...</div>
+          <div class="sb-list">
+            <div class="sb-item pinned" onclick="aGoHomeFromSidebar()">
+              <div class="sb-av bot">🤖</div>
+              <div class="sb-info">
+                <div class="sb-name">我的助理 <span class="sb-pin">置顶</span></div>
+                <div class="sb-last">拈花一笑，且问玄机</div>
+              </div>
+            </div>
+            <div class="sb-item" onclick="aOpenContactChat('小王')">
+              <div class="sb-av usr">王</div>
+              <div class="sb-info">
+                <div class="sb-name">小王</div>
+                <div class="sb-last">排号还有3桌，快到了</div>
+              </div>
+              <div class="sb-badge">2</div>
+            </div>
+            <div class="sb-item" onclick="aOpenContactChat('李总')">
+              <div class="sb-av usr">李</div>
+              <div class="sb-info">
+                <div class="sb-name">李总</div>
+                <div class="sb-last">会议已确认</div>
+              </div>
+            </div>
+          </div>
+          <div class="sb-foot">
+            <div class="sb-req-row" onclick="aOpenReqList()">
+              <div class="sb-req-dot" id="A-req-dot"></div><span id="A-req-label">好友请求 (1)</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /screen -->
     </div>
+  </div>
 
-    <script>
-        // 全局变量
-        let selectedFile = null;
-        // 默认使用提供的 API Key
-        const apiKey = 'AIzaSyBkk2n_VF6YGDytx6yM7T-wQxZEdhLwK7Y';
+  <!-- ══════════ 手机 B ══════════ -->
+  <div class="phone-wrap">
+    <div class="phone-label">📱 设备 B（接收方）</div>
+    <div class="phone" id="phoneB">
 
-        // 秘书指令 Prompt（从 meeting agent.md 读取）
-        const SECRETARY_PROMPT = `# 📝 Role: 移动互联网专业会议秘书 Agent
+      <div class="di" id="diB" onclick="closeDI('B')">
+        <div class="di-body" id="diB-body"></div>
+      </div>
 
-## 🛠 Profile
-你是一位拥有10年经验的高级行政秘书，曾在移动互联网行业深耕多年。你熟知手机厂商讯息、产品迭代方法论（如TR评审流程）、手机应用发布流程及技术方案评审步骤。你擅长从杂乱的口语对话中提取核心信息，逻辑严密，用词精准。
+      <div class="screen">
 
-## 🎯 Goals
-接收用户提供的会议录音转录文本（Transcript），输出一份结构清晰、重点突出的专业会议纪要。
+        <!-- B-home -->
+        <div class="view on" id="B-home">
+          <div class="sbar">
+            <span>12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="toggleSidebar('B')">☰</div>
+            <div class="nbar-tt">玄机 Bash</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="home-content">
+            <div class="home-logo"><div class="inner"></div></div>
+            <div class="home-slogan">拈花一笑，且问玄机</div>
+            <div class="home-actions">
+              <button class="home-action"><div class="hico" style="background:#007AFF">📅</div>查日程</button>
+              <button class="home-action"><div class="hico" style="background:#34C759">💬</div>发短信</button>
+              <button class="home-action"><div class="hico" style="background:#5AC8FA">🌤</div>查天气</button>
+              <button class="home-action"><div class="hico" style="background:#007AFF">👤</div>查联系人</button>
+              <button class="home-action friend">
+                <div class="hico" style="background:linear-gradient(135deg,#667eea,#764ba2)">🤝</div>添加好友
+              </button>
+            </div>
+          </div>
+          <div class="home-input">
+            <div class="hi-plus">+</div>
+            <div class="hi-inp">拈花一笑，且问玄机...</div>
+            <div class="hi-mic">🎙</div>
+          </div>
+        </div>
 
-## ⚠️ Constraints
-1. **深度脱水**：过滤掉口语废话（如"那个"、"呃"、"嗯"）、寒暄和无关闲聊。
-2. **客观专业**：保持中立，严禁臆造；利用行业背景知识准确理解专业术语（如TR2、整机备份等）。
-3. **标注模糊点**：对原文中模糊的关键信息（日期、金额、负责人），在"待确认事项"中标注。
-4. **易读性**：优先分析背景说明，确保非参会人员也能快速理解会议脉络。
+        <!-- B-chat -->
+        <div class="view" id="B-chat">
+          <div class="sbar">
+            <span id="timeB">12:20</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="bGoHome()" style="font-size:22px">‹</div>
+            <div class="nbar-tt">玄机 Bash</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="chat-body" id="B-msgs"></div>
+          <div class="chat-ibar">
+            <div class="chat-ibar-plus">+</div>
+            <div class="chat-input-wrap">
+              <input class="chat-input-real" type="text" placeholder="拈花一笑，且问玄机...">
+              <button class="chat-send" disabled>➤</button>
+            </div>
+            <div class="chat-ibar-mic">🎙</div>
+          </div>
+        </div>
 
-## 📋 Output Format (严格按此格式输出)
+        <!-- 侧边栏 B -->
+        <div class="sb-ov" id="B-sb-ov" onclick="toggleSidebar('B')"></div>
+        <div class="sidebar" id="B-sidebar">
+          <div class="sb-head">
+            <h2>对话</h2>
+            <div class="sb-add-btn">+</div>
+          </div>
+          <div class="sb-search">🔍 搜索对话...</div>
+          <div class="sb-list">
+            <div class="sb-item pinned">
+              <div class="sb-av bot">🤖</div>
+              <div class="sb-info">
+                <div class="sb-name">我的助理 <span class="sb-pin">置顶</span></div>
+                <div class="sb-last">拈花一笑，且问玄机</div>
+              </div>
+            </div>
+          </div>
+          <div class="sb-foot">
+            <div class="sb-req-row" id="B-req-row" style="display:none">
+              <div class="sb-req-dot"></div>好友请求 (1)
+            </div>
+          </div>
+        </div>
 
-### 📅 会议基本信息
-- **会议主题**: [根据内容自动生成]
-- **会议时间**: [如有提到则填写，否则填写当前日期或留空]
-- **参会人员**: [提取人名，前加前缀 @]
+      </div><!-- /screen -->
+    </div>
+  </div>
 
-### 📝 1. 会议总结 (Summary)
-#### **目标 (Objectives)**
-1. [项一]：结合行业背景详细拆分
-2. [项二]...
-#### **共识 (Consensus)**
-1. [项一]：明确各方认可的结论
-2. [项二]...
+</div><!-- /phones-row -->
 
-### 💡 2. 核心议题与讨论细节
-- **议题一: [名称]**
-  - **背景/动机**: [说明为什么要讨论此议题]
-  - **观点 A (人名)**: ...
-  - **观点 B (人名)**: ...
-  - **结论**: ...
-- **议题二: ...**
+<script>
+/* ══════════ 状态 ══════════ */
+let aState = 'home';
+let bState = 'home';
+let typedID = '';
+let confirmedID = '';
 
-### ✅ 3. 待办任务和跟进 (Action Items)
-| 状态 | 任务内容 | 负责人 | 截止日期 (DDL) | 优先级 |
-| :--- | :--- | :--- | :--- | :--- |
-| [ ] | [具体动作] | [人名] | [时间/待定] | [高/中/低] |
+/* ══════════ 工具 ══════════ */
+function showViews(a, b) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById(a).classList.add('on');
+  document.getElementById(b).classList.add('on');
+}
 
-### ❓ 4. 待确认/遗留问题
-- [列出需要后续跟进或逻辑断层点]
+function appendMsg(container, who, html) {
+  const d = document.getElementById(container);
+  const row = document.createElement('div');
+  if (who === 'card') {
+    row.className = 'mrow';
+    row.innerHTML = `<div style="width:28px;flex-shrink:0"></div>${html}`;
+  } else {
+    const isMe = who.startsWith('me');
+    row.className = 'mrow' + (isMe ? ' me' : '');
+    const avClass = who === 'me-a' ? 'ua' : who === 'me-b' ? 'ub' : 'xj';
+    const avTxt   = who === 'me-a' ? 'A' : who === 'me-b' ? 'B' : '🤖';
+    row.innerHTML = `<div class="mav ${avClass}">${avTxt}</div><div class="bbl">${html}</div>`;
+  }
+  d.appendChild(row);
+  d.scrollTop = d.scrollHeight;
+  return row;
+}
 
-### 👂 5. 智能章节 (Timeline)
-- [时:分:秒] [议题名称]
-  - [该时段核心内容简述]
+function clearMsgs(id) { document.getElementById(id).innerHTML = ''; }
 
-## 🚀 Workflow
-1. **全局分析**：识别参会人、手机业务背景及主要议题。
-2. **多维提取**：提炼会议目标（Objectives）、多方共识（Consensus）及任务。
-3. **逻辑校对**：基于移动互联网产品开发逻辑重新校验内容的合理性。
-4. **格式生成**：生成带 Checkbox 和 Markdown 表格的最终纪要。
+/* 灵动岛 */
+const _diTimers = {};
+function openDI(pid, icon, iconBg, t1, t2, autoDismiss) {
+  clearTimeout(_diTimers[pid]);
+  const di = document.getElementById('di' + pid);
+  const body = document.getElementById('di' + pid + '-body');
+  di.classList.add('open');
+  body.className = 'di-body show';
+  body.innerHTML = `<div class="di-ico" style="background:${iconBg}">${icon}</div><div class="di-txt"><div class="di-t1">${t1}</div><div class="di-t2">${t2}</div></div>`;
+  if (autoDismiss) _diTimers[pid] = setTimeout(() => closeDI(pid), autoDismiss);
+}
+function closeDI(pid) {
+  clearTimeout(_diTimers[pid]);
+  const di = document.getElementById('di' + pid);
+  const body = document.getElementById('di' + pid + '-body');
+  di.classList.remove('open');
+  body.className = 'di-body';
+  body.innerHTML = '';
+}
 
-请分析以下会议录音，并按照上述格式输出会议纪要。`;
+/* 侧边栏 */
+function toggleSidebar(pid) {
+  document.getElementById(pid + '-sb-ov').classList.toggle('show');
+  document.getElementById(pid + '-sidebar').classList.toggle('show');
+}
 
-        // DOM 元素
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const resultContent = document.getElementById('resultContent');
+function setTime(id, t) { const el = document.getElementById(id); if(el) el.textContent = t; }
+function escHtml(s) { return s.replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-        // 更新分析按钮状态
-        function updateAnalyzeButton() {
-            analyzeBtn.disabled = !selectedFile;
-        }
+/* ══════════ A 端 ══════════ */
+let _kbdShifted = false;
 
-        // 点击上传区域
-        uploadArea.addEventListener('click', (e) => {
-            // 确保点击的不是文件信息区域
-            if (e.target !== fileInfo && !fileInfo.contains(e.target)) {
-                fileInput.click();
-            }
-        });
+function aHomeInputClick() {
+  /* 打开前先重置到字母视图 */
+  aKbdToAlpha();
+  _kbdShifted = false; _updateShift(false);
+  document.getElementById('A-home-kbd').classList.add('show');
+  document.getElementById('A-home-input').focus();
+  document.querySelector('#A-home .home-content').classList.add('kopen');
+}
 
-        // 文件选择
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files.length > 0) {
-                handleFileSelect(e.target.files[0]);
-            }
-        });
+/* 字母/符号按键输入（含 Shift 逻辑） */
+function aKbdType(v) {
+  const inp = document.getElementById('A-home-input');
+  if (_kbdShifted && typeof v === 'string' && v.length === 1 && /[a-z]/.test(v)) {
+    v = v.toUpperCase();
+    _kbdShifted = false;
+    _updateShift(false);
+  }
+  inp.value += v; inp.focus();
+}
+function aKbdDel() {
+  const inp = document.getElementById('A-home-input');
+  inp.value = inp.value.slice(0, -1);
+}
 
-        // 拖拽事件处理 - 关键修复
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.classList.add('dragover');
-        });
+/* Shift 切换大小写 */
+function aKbdShift() {
+  _kbdShifted = !_kbdShifted;
+  _updateShift(_kbdShifted);
+}
+function _updateShift(on) {
+  document.querySelectorAll('#A-qwerty-alpha .qk[data-k]').forEach(btn => {
+    btn.textContent = on ? btn.dataset.k.toUpperCase() : btn.dataset.k;
+  });
+  const sb = document.getElementById('A-shift-btn');
+  if (sb) sb.classList.toggle('shifted', on);
+}
 
-        uploadArea.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.classList.remove('dragover');
-        });
+/* 字母 ↔ 数字视图切换 */
+function aKbdToNum() {
+  document.getElementById('A-qwerty-alpha').style.display = 'none';
+  document.getElementById('A-qwerty-num').style.display = '';
+}
+function aKbdToAlpha() {
+  const na = document.getElementById('A-qwerty-alpha');
+  const nn = document.getElementById('A-qwerty-num');
+  if (na) na.style.display = '';
+  if (nn) nn.style.display = 'none';
+}
+function aHomeSend() {
+  const inp = document.getElementById('A-home-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  inp.value = '';
+  document.getElementById('A-home-kbd').classList.remove('show');
+  document.querySelector('#A-home .home-content').classList.remove('kopen');
+  if (val.includes('添加') || val.includes('好友')) {
+    aStartAddFriend();
+  } else {
+    aEnterChat('general', val);
+  }
+}
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.classList.remove('dragover');
+function aStartAddFriend() {
+  aState = 'guide'; typedID = '';
+  clearMsgs('A-msgs');
+  showViews('A-chat','B-home');
+  appendMsg('A-msgs','me-a','添加好友');
+  setTimeout(() => {
+    appendMsg('A-msgs','agent','好的！请输入好友的手机号或玄机 ID，我来帮您发送申请 👇');
+    setTimeout(() => {
+      appendMsg('A-msgs','card', buildInputCard(''));
+      document.getElementById('A-chat-kbd').classList.add('show');
+      document.getElementById('A-chat-input').focus();
+    }, 400);
+  }, 500);
+}
 
-            const files = e.dataTransfer.files;
-            if (files && files.length > 0) {
-                handleFileSelect(files[0]);
-            }
-        });
+function aEnterChat(type, val) {
+  aState = 'general';
+  clearMsgs('A-msgs');
+  showViews('A-chat','B-home');
+  if (val) appendMsg('A-msgs','me-a', escHtml(val));
+  const replies = {
+    calendar:'好的，正在查询您的日程安排…',
+    sms:'请告诉我发短信给谁，以及发送的内容。',
+    weather:'正在获取您所在位置的天气…',
+    contacts:'请告诉我要查找哪位联系人？',
+    general:'好的，我来帮您处理这个请求 😊',
+  };
+  setTimeout(() => appendMsg('A-msgs','agent', replies[type]||replies.general), 600);
+}
 
-        // 处理文件选择
-        function handleFileSelect(file) {
-            if (!file) return;
+function buildInputCard(val) {
+  const hint = val ? '' : '<div class="inp-card-hint">示例：138xxxx5566 或 玄机 ID</div>';
+  return `<div class="inp-card" id="inp-card-el">
+    <div class="inp-card-lbl">手机号 / 玄机 ID</div>
+    <div class="inp-card-box"><span id="card-display">${escHtml(val)}</span><div class="cursor"></div></div>
+    ${hint}
+  </div>`;
+}
 
-            // 检查是否为音频文件
-            if (!file.type.startsWith('audio/')) {
-                alert('请上传音频文件！支持格式：mp3, wav, m4a, ogg 等');
-                return;
-            }
+function syncCardInput(val) {
+  typedID = val;
+  const cd = document.getElementById('card-display');
+  if (cd) cd.textContent = val;
+}
 
-            selectedFile = file;
-            fileInfo.textContent = `📄 ${file.name} (${formatFileSize(file.size)})`;
-            fileInfo.classList.add('show');
-            updateAnalyzeButton();
-        }
+function aChatKbd(v) {
+  const inp = document.getElementById('A-chat-input');
+  inp.value += v; syncCardInput(inp.value); inp.focus();
+}
+function aChatKbdDel() {
+  const inp = document.getElementById('A-chat-input');
+  inp.value = inp.value.slice(0,-1); syncCardInput(inp.value);
+}
 
-        // 格式化文件大小
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
+function aChatSend() {
+  const inp = document.getElementById('A-chat-input');
+  const val = inp.value.trim();
+  if (!val) return;
 
-        // 将文件转换为 Base64
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const base64 = reader.result.split(',')[1];
-                    resolve(base64);
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
+  if (aState === 'guide') {
+    typedID = val;
+    inp.value = '';
+    document.getElementById('A-chat-kbd').classList.remove('show');
+    aState = 'confirm';
+    const card = document.getElementById('inp-card-el');
+    if (card) card.closest('.mrow').remove();
+    appendMsg('A-msgs','me-a', escHtml(val));
+    const thinkRow = appendMsg('A-msgs','agent','<span style="color:#AEAEB2">正在查找用户…</span>');
+    setTimeout(() => {
+      thinkRow.remove();
+      if (val === '1111') {
+        appendMsg('A-msgs','agent','已找到该用户 ✅<br><span style="font-size:11px;color:#8E8E93">是否发送好友申请？</span>');
+        appendMsg('A-msgs','card', buildConfirmCard(val));
+      } else {
+        aState = 'guide';
+        appendMsg('A-msgs','agent',`<span style="color:#FF3B30">❌ 未找到「${escHtml(val)}」对应的用户</span><br><span style="font-size:11px;color:#8E8E93">请确认手机号或 ID 是否正确，重新输入试试</span>`);
+        appendMsg('A-msgs','card', buildInputCard(''));
+        document.getElementById('A-chat-kbd').classList.add('show');
+        document.getElementById('A-chat-input').focus();
+      }
+    }, 900);
 
-        // 获取文件的 MIME 类型
-        function getMimeType(file) {
-            // 如果文件有类型，直接使用
-            if (file.type) {
-                return file.type;
-            }
-            // 否则根据扩展名推断
-            const ext = file.name.split('.').pop().toLowerCase();
-            const mimeTypes = {
-                'mp3': 'audio/mpeg',
-                'wav': 'audio/wav',
-                'm4a': 'audio/mp4',
-                'ogg': 'audio/ogg',
-                'flac': 'audio/flac',
-                'aac': 'audio/aac'
-            };
-            return mimeTypes[ext] || 'audio/mpeg';
-        }
+  } else if (aState === 'general') {
+    inp.value = '';
+    appendMsg('A-msgs','me-a', escHtml(val));
+    setTimeout(() => appendMsg('A-msgs','agent','好的，我来帮您处理这个请求 😊'), 500);
+  }
+}
 
-        // 开始分析
-        analyzeBtn.addEventListener('click', async () => {
-            if (!selectedFile) {
-                alert('请先上传音频文件！');
-                return;
-            }
+function buildConfirmCard(id) {
+  const maskId = id.length > 4 ? id.slice(0,3)+'****'+id.slice(-2) : id+'****';
+  return `<div class="confirm-card">
+    <div class="cc-row">
+      <div class="cc-av">B</div>
+      <div><div class="cc-name">玄机用户·B</div><div class="cc-id">${escHtml(maskId)}</div></div>
+    </div>
+    <div class="cc-btns">
+      <button class="btn-send" onclick="aSendRequest('${escHtml(id)}')">确认发送申请</button>
+      <button class="btn-cancel" onclick="aCancel()">取消</button>
+    </div>
+  </div>`;
+}
 
-            analyzeBtn.disabled = true;
-            resultContent.innerHTML = '<div class="loading">正在分析会议录音，请稍候</div>';
+function aSendRequest(id) {
+  confirmedID = id; aState = 'waiting';
+  document.querySelectorAll('#A-msgs .confirm-card').forEach(el => el.closest('.mrow').remove());
+  appendMsg('A-msgs','me-a','确认发送申请');
+  appendMsg('A-msgs','agent','✉️ 好友申请已发送<br><span style="font-size:11px;color:#8E8E93">等待对方确认中…</span>');
+  setTimeout(() => bReceiveRequest(id), 1000);
+}
 
-            try {
-                // 转换文件为 Base64
-                const base64Audio = await fileToBase64(selectedFile);
-                const mimeType = getMimeType(selectedFile);
+function aCancel() {
+  aState = 'guide';
+  document.querySelectorAll('#A-msgs .confirm-card').forEach(el => el.closest('.mrow').remove());
+  appendMsg('A-msgs','agent','好的，已取消。如需重新添加，请输入好友的手机号或 ID 👇');
+  appendMsg('A-msgs','card', buildInputCard(''));
+  document.getElementById('A-chat-kbd').classList.add('show');
+  document.getElementById('A-chat-input').focus();
+}
 
-                // 调用 Gemini API
-                const result = await callGeminiAPI(base64Audio, mimeType);
+function aGoHome() {
+  aState = 'home'; typedID = ''; confirmedID = '';
+  document.getElementById('A-home-kbd').classList.remove('show');
+  document.getElementById('A-chat-kbd').classList.remove('show');
+  document.querySelector('#A-home .home-content').classList.remove('kopen');
+  _kbdShifted = false; _updateShift(false); aKbdToAlpha();
+  showViews('A-home','B-home');
+  closeDI('A'); closeDI('B');
+  clearMsgs('A-msgs'); clearMsgs('B-msgs');
+  bState = 'home';
+}
 
-                // 渲染结果
-                renderResult(result);
-            } catch (error) {
-                console.error('分析失败:', error);
-                resultContent.innerHTML = `
-                    <div class="error">
-                        <strong>❌ 分析失败</strong><br>
-                        ${error.message || '未知错误，请检查 API Key 和网络连接'}
-                    </div>
-                `;
-            } finally {
-                analyzeBtn.disabled = false;
-                updateAnalyzeButton();
-            }
-        });
+/* 从侧边栏「我的助理」跳回首页（先关侧边栏） */
+function aGoHomeFromSidebar() {
+  document.getElementById('A-sb-ov').classList.remove('show');
+  document.getElementById('A-sidebar').classList.remove('show');
+  aGoHome();
+}
 
-        // 调用 Gemini API（使用 REST API）
-        async function callGeminiAPI(base64Audio, mimeType) {
-            // 尝试的模型列表（按优先级排序）
-            // 已验证：API Key 有效，以下模型都支持 generateContent
-            // 注意：模型名称不需要 "models/" 前缀
-            const models = [
-                { name: 'gemini-2.5-flash', version: 'v1' },
-                { name: 'gemini-2.5-pro', version: 'v1' },
-                { name: 'gemini-2.0-flash', version: 'v1' },
-                { name: 'gemini-2.0-flash-001', version: 'v1' },
-                { name: 'gemini-2.5-flash', version: 'v1beta' },
-                { name: 'gemini-2.5-pro', version: 'v1beta' }
-            ];
+function aOnFriendAccepted() {
+  aState = 'success';
+  setTime('timeA2','12:21');
+  document.querySelectorAll('#A-msgs .bbl.wait').forEach(el => el.closest('.mrow').remove());
+  appendMsg('A-msgs','agent','✉️ 好友申请已发送<br><span style="font-size:11px;color:#8E8E93">等待对方确认中…</span>');
+  appendMsg('A-msgs','agent','<span class="bbl succ" style="max-width:unset;box-shadow:none;padding:0;background:none;display:block">🎉 <strong>好友添加成功！</strong><br><span style="font-size:11px;color:#555">对方已同意，现在可以授权 TA 与您的助理对话</span></span>');
+  openDI('A','✓','linear-gradient(135deg,#34C759,#28A745)','好友添加成功 🎉',`${escHtml(confirmedID)} 已同意您的申请`,5000);
+}
 
-            const requestBody = {
-                contents: [{
-                    parts: [
-                        {
-                            text: SECRETARY_PROMPT
-                        },
-                        {
-                            inlineData: {
-                                mimeType: mimeType,
-                                data: base64Audio
-                            }
-                        },
-                        {
-                            text: "请根据上述规则分析这段会议录音，生成结构化的会议纪要。"
-                        }
-                    ]
-                }]
-            };
+/* ══════════ 好友请求列表 ══════════ */
+function aOpenReqList() {
+  toggleSidebar('A');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById('A-req-list').classList.add('on');
+  document.getElementById('B-home').classList.add('on');
+}
 
-            let lastError = null;
+let _frPending = 1; /* 待处理数量 */
 
-            // 尝试每个模型
-            for (const model of models) {
-                try {
-                    const url = `https://generativelanguage.googleapis.com/${model.version}/models/${model.name}:generateContent?key=${apiKey}`;
-                    
-                    console.log(`尝试使用模型: ${model.name} (${model.version})`);
+function frHandle(id, action) {
+  const card = document.getElementById('fr-card-' + id);
+  if (!card) return;
+  const name = card.querySelector('.fr-name').textContent;
+  const initial = card.querySelector('.fr-av').textContent;
+  const now = new Date();
+  const dateStr = (now.getMonth() + 1) + '月' + now.getDate() + '日';
+  const isAccept = action === 'accept';
 
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
+  /* 替换按钮为结果文字 */
+  card.querySelector('.fr-btns').innerHTML =
+    `<span style="font-size:13px;font-weight:500;padding:4px 0;color:${isAccept ? '#34C759' : '#999'}">${isAccept ? '✓ 已同意' : '已拒绝'}</span>`;
 
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        lastError = new Error(errorData.error?.message || `API 请求失败: ${response.status} ${response.statusText}`);
-                        console.warn(`模型 ${model.name} 失败:`, lastError.message);
-                        continue; // 尝试下一个模型
-                    }
+  /* 延迟后：移入已处理列表，移除卡片 */
+  setTimeout(() => {
+    const list = document.getElementById('fr-processed-list');
+    const row = document.createElement('div');
+    row.className = 'fr-processed';
+    row.innerHTML = `<div class="frp-av">${initial}</div><div class="frp-name">${name}</div><div class="frp-status ${isAccept ? 'accepted' : 'rejected'}">${isAccept ? '已同意' : '已拒绝'} · ${dateStr}</div>`;
+    list.insertBefore(row, list.firstChild);
+    card.remove();
+    /* 更新待处理数 */
+    _frPending = Math.max(0, _frPending - 1);
+    const dot = document.getElementById('A-req-dot');
+    const label = document.getElementById('A-req-label');
+    if (_frPending === 0) {
+      if (dot) dot.style.display = 'none';
+      if (label) label.textContent = '好友请求';
+      document.getElementById('fr-pending-label').style.display = 'none';
+    } else {
+      if (label) label.textContent = `好友请求 (${_frPending})`;
+    }
+  }, 400);
+}
 
-                    const data = await response.json();
-                    
-                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                        lastError = new Error('API 返回格式异常，请检查 API Key 是否正确');
-                        continue;
-                    }
+/* ══════════ 联系人对话 ══════════ */
+const _contactChats = {
+  '小王': [
+    {who:'other', av:'王', color:'#e8e8e8', tc:'#555', text:'你好，我是小王的助理'},
+    {who:'me',    av:'A',  color:'linear-gradient(135deg,#FF6B6B,#FF8E53)', tc:'#fff', text:'你好！我是 A 的助理'},
+    {who:'other', av:'王', color:'#e8e8e8', tc:'#555', text:'帮我问一下 A，今晚几点方便吃饭？'},
+    {who:'me',    av:'A',  color:'linear-gradient(135deg,#FF6B6B,#FF8E53)', tc:'#fff', text:'A 今晚 7 点后都方便'},
+    {who:'other', av:'王', color:'#e8e8e8', tc:'#555', text:'好的，7:30 老地方见，排号还有3桌，快到了'},
+  ],
+  '李总': [
+    {who:'other', av:'李', color:'#e8e8e8', tc:'#555', text:'你好，我是李总的助理'},
+    {who:'me',    av:'A',  color:'linear-gradient(135deg,#FF6B6B,#FF8E53)', tc:'#fff', text:'您好，我是 A 的助理，请问有什么事？'},
+    {who:'other', av:'李', color:'#e8e8e8', tc:'#555', text:'明天上午10点的会议，李总确认参加'},
+    {who:'me',    av:'A',  color:'linear-gradient(135deg,#FF6B6B,#FF8E53)', tc:'#fff', text:'收到，A 会准时参加，请问会议室在哪里？'},
+    {who:'other', av:'李', color:'#e8e8e8', tc:'#555', text:'会议已确认，会议室在 B402，请提前10分钟到'},
+  ],
+};
 
-                    console.log(`成功使用模型: ${model.name} (${model.version})`);
-                    return data.candidates[0].content.parts[0].text;
-                } catch (error) {
-                    console.warn(`模型 ${model.name} 异常:`, error.message);
-                    lastError = error;
-                    continue;
-                }
-            }
+function aOpenContactChat(name) {
+  toggleSidebar('A');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById('A-ext-chat').classList.add('on');
+  document.getElementById('B-home').classList.add('on');
+  document.getElementById('A-ext-title').textContent = name;
+  const msgs = document.getElementById('A-ext-msgs');
+  msgs.innerHTML = '';
+  (_contactChats[name] || []).forEach(m => {
+    const isMe = m.who === 'me';
+    const row = document.createElement('div');
+    row.className = 'mrow' + (isMe ? ' me' : '');
+    row.innerHTML = `<div class="mav" style="background:${m.color};color:${m.tc}">${m.av}</div><div class="bbl">${m.text}</div>`;
+    msgs.appendChild(row);
+  });
+  msgs.scrollTop = msgs.scrollHeight;
+}
 
-            // 所有模型都失败
-            if (lastError) {
-                if (lastError.message.includes('API_KEY') || lastError.message.includes('API key')) {
-                    throw new Error('API Key 无效，请检查您的 API Key 是否正确');
-                } else if (lastError.message.includes('fetch') || lastError.message.includes('network')) {
-                    throw new Error('网络请求失败，请检查网络连接');
-                } else {
-                    throw new Error(`所有模型尝试失败。最后错误: ${lastError.message}。请检查 API Key 和网络连接。`);
-                }
-            }
+/* ══════════ B 端 ══════════ */
+function bGoHome() {
+  bState = 'home';
+  showViews('A-home','B-home');
+  closeDI('A'); closeDI('B');
+  clearMsgs('A-msgs'); clearMsgs('B-msgs');
+  aState = 'home'; typedID = ''; confirmedID = '';
+}
 
-            throw new Error('未知错误：无法调用 Gemini API');
-        }
+function bReceiveRequest(id) {
+  bState = 'request';
+  setTime('timeB','12:20');
+  clearMsgs('B-msgs');
+  showViews('A-chat','B-chat');
+  openDI('B','👋','linear-gradient(135deg,#007AFF,#5856D6)','好友申请','玄机用户·A 想添加您为好友',0);
+  setTimeout(() => {
+    appendMsg('B-msgs','agent','您收到一条新的好友申请 👋');
+    appendMsg('B-msgs','card', buildRequestCard(id));
+  }, 400);
+}
 
-        // 渲染结果
-        function renderResult(markdownText) {
-            try {
-                // 使用 marked 将 Markdown 转换为 HTML
-                const html = marked.parse(markdownText);
-                resultContent.innerHTML = html;
+function buildRequestCard(id) {
+  const maskId = id.length > 4 ? id.slice(0,3)+'****'+id.slice(-2) : id+'****';
+  return `<div class="req-card">
+    <div class="rc-row">
+      <div class="rc-av">A</div>
+      <div><div class="rc-name">玄机用户·A</div><div class="rc-id">来源：${escHtml(maskId)}</div></div>
+    </div>
+    <div class="rc-note">👋 Hi，我是 A，希望添加您为好友，期待未来借助彼此的助理互相协作！</div>
+    <div class="rc-btns">
+      <button class="btn-ok" onclick="bAccept()">同意</button>
+      <button class="btn-no" onclick="bDecline()">拒绝</button>
+    </div>
+  </div>`;
+}
 
-                // 处理复选框（将 Markdown 的 [ ] 和 [x] 转换为实际的 checkbox）
-                // marked 会自动处理，但我们需要确保样式正确
-                const checkboxes = resultContent.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', (e) => {
-                        // 可以在这里添加持久化逻辑
-                        console.log('Checkbox toggled:', e.target.checked);
-                    });
-                });
-            } catch (error) {
-                console.error('渲染失败:', error);
-                resultContent.innerHTML = `
-                    <div class="error">
-                        <strong>❌ 渲染失败</strong><br>
-                        ${error.message}
-                    </div>
-                `;
-            }
-        }
+function bAccept() {
+  bState = 'success';
+  setTime('timeB','12:21');
+  document.querySelectorAll('#B-msgs .req-card').forEach(el => el.closest('.mrow').remove());
+  appendMsg('B-msgs','me-b','同意');
+  appendMsg('B-msgs','agent','<span class="bbl succ" style="max-width:unset;box-shadow:none;padding:0;background:none;display:block">🎉 <strong>好友添加成功！</strong><br><span style="font-size:11px;color:#555">您与 玄机用户·A 已成为好友</span></span>');
+  closeDI('B');
+  openDI('B','✓','linear-gradient(135deg,#34C759,#28A745)','好友添加成功 🎉','您与 玄机用户·A 已成为好友',5000);
+  aOnFriendAccepted();
+}
 
-        // 清空按钮
-        clearBtn.addEventListener('click', () => {
-            selectedFile = null;
-            fileInput.value = '';
-            fileInfo.classList.remove('show');
-            resultContent.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">请上传音频文件，然后点击"开始解析"</p>';
-            updateAnalyzeButton();
-        });
+function bDecline() {
+  bState = 'home';
+  document.querySelectorAll('#B-msgs .req-card').forEach(el => el.closest('.mrow').remove());
+  appendMsg('B-msgs','me-b','拒绝');
+  appendMsg('B-msgs','agent','已拒绝该好友申请。');
+  closeDI('B');
+  aState = 'guide';
+  setTime('timeA2','12:21');
+  document.querySelectorAll('#A-msgs .bbl.wait').forEach(el => el.closest('.mrow').remove());
+  appendMsg('A-msgs','agent','对方暂时拒绝了您的好友申请 🙁<br><span style="font-size:11px;color:#8E8E93">您可以稍后再试</span>');
+}
 
-        // 初始化按钮状态
-        updateAnalyzeButton();
-    </script>
+/* 时间 */
+function liveTime() {
+  const now = new Date();
+  const t = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  ['timeA','timeA2','timeB'].forEach(id => setTime(id,t));
+}
+liveTime();
+setInterval(liveTime, 30000);
+</script>
 </body>
 </html>
