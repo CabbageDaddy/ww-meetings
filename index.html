@@ -377,6 +377,125 @@ body {
 .view { display:none; flex-direction:column; height:100%; }
 .view.on { display:flex; }
 
+/* ── 扫码界面 ── */
+.scan-ov {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:#0a0a0a; z-index:180;
+  display:flex; flex-direction:column;
+  opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.scan-ov.show { opacity:1; pointer-events:auto; }
+.scan-topbar {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:46px 16px 10px; flex-shrink:0;
+}
+.scan-back {
+  width:30px; height:30px; border-radius:50%;
+  background:rgba(255,255,255,.15);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:#fff; cursor:pointer;
+}
+.scan-ttl { font-size:16px; font-weight:600; color:#fff; }
+.scan-mid {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:22px;
+}
+/* 取景框 */
+.scan-box {
+  width:200px; height:200px; position:relative;
+  /* 四周半透明遮罩 */
+  box-shadow:0 0 0 600px rgba(0,0,0,.55);
+}
+/* 四角 L 形白线 */
+.scan-box .sc {
+  position:absolute; width:22px; height:22px;
+  border-color:#fff; border-style:solid;
+}
+.sc-tl { top:0;    left:0;  border-width:3px 0 0 3px; border-radius:2px 0 0 0; }
+.sc-tr { top:0;    right:0; border-width:3px 3px 0 0; border-radius:0 2px 0 0; }
+.sc-bl { bottom:0; left:0;  border-width:0 0 3px 3px; border-radius:0 0 0 2px; }
+.sc-br { bottom:0; right:0; border-width:0 3px 3px 0; border-radius:0 0 2px 0; }
+/* 扫描线 */
+.scan-line-el {
+  position:absolute; left:4px; right:4px; height:2px;
+  background:linear-gradient(90deg,transparent,#00CFFF 30%,#00EAFF 50%,#00CFFF 70%,transparent);
+  box-shadow:0 0 6px #00CFFF;
+  animation:scanMove 1.8s ease-in-out infinite;
+}
+@keyframes scanMove { 0%,100%{top:4px} 50%{top:192px} }
+/* 识别成功 */
+.scan-ok {
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  background:rgba(52,199,89,.92); color:#fff;
+  padding:6px 16px; border-radius:20px;
+  font-size:13px; font-weight:600;
+  opacity:0; transition:opacity .2s; white-space:nowrap; pointer-events:none;
+}
+.scan-hint {
+  font-size:13px; color:rgba(255,255,255,.55); text-align:center;
+}
+.scan-album {
+  padding:20px 20px 36px; display:flex; justify-content:center;
+}
+.scan-album-btn {
+  padding:10px 32px; border-radius:20px;
+  border:1px solid rgba(255,255,255,.3); background:transparent;
+  color:rgba(255,255,255,.7); font-size:13px; cursor:pointer;
+}
+.scan-album-btn:active { background:rgba(255,255,255,.1); }
+
+/* ── 侧边栏底部二维码按钮 ── */
+.sb-foot { padding:10px 16px 20px; border-top:0.5px solid #eee; }
+.sb-qr-btn {
+  display:flex; align-items:center; gap:9px;
+  padding:10px 12px; background:#f5f5f5; border-radius:12px;
+  font-size:14px; font-weight:500; color:#333; cursor:pointer;
+}
+.sb-qr-btn:active { background:#e8e8e8; }
+.sb-qr-ico {
+  width:28px; height:28px; border-radius:8px;
+  background:linear-gradient(135deg,#007AFF,#5856D6);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+
+/* ── 二维码底部弹窗 ── */
+.qr-overlay {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.5); z-index:200;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+  display:flex; align-items:flex-end;
+}
+.qr-overlay.show { opacity:1; pointer-events:auto; }
+.qr-sheet {
+  background:#fff; border-radius:20px 20px 0 0; width:100%;
+  padding:18px 20px 32px;
+  transform:translateY(100%); transition:transform .3s ease;
+}
+.qr-overlay.show .qr-sheet { transform:translateY(0); }
+.qr-hd {
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;
+}
+.qr-ttl { font-size:16px; font-weight:600; color:#1a1a1a; }
+.qr-cls {
+  width:26px; height:26px; border-radius:50%; background:#f0f0f0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:#666; cursor:pointer;
+}
+.qr-cls:active { background:#ddd; }
+.qr-wrap { display:flex; justify-content:center; margin-bottom:14px; }
+.qr-wrap canvas { border-radius:6px; }
+.qr-countdown {
+  text-align:center; font-size:12px; color:#8E8E93; margin-bottom:14px;
+}
+.qr-countdown span { color:#007AFF; font-weight:600; }
+.qr-btn {
+  display:block; width:100%; padding:12px;
+  background:#f5f5f5; color:#007AFF; border:none;
+  border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;
+}
+.qr-btn:active { background:#e8e8e8; }
+
 /* ── iOS 风格键盘基础 ── */
 .kbd-overlay {
   position:absolute; bottom:0; left:0; right:0;
@@ -508,9 +627,6 @@ body {
               </button>
               <button class="home-action" onclick="aEnterChat('contacts')">
                 <div class="hico" style="background:#007AFF">👤</div>查联系人
-              </button>
-              <button class="home-action friend" onclick="aStartAddFriend()">
-                <div class="hico" style="background:linear-gradient(135deg,#667eea,#764ba2)">🤝</div>添加好友
               </button>
             </div>
           </div>
@@ -681,49 +797,6 @@ body {
           </div>
         </div>
 
-        <!-- A-req-list：好友请求列表 -->
-        <div class="view" id="A-req-list">
-          <div class="sbar">
-            <span>12:19</span>
-            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
-          </div>
-          <div class="nbar">
-            <div class="nbar-ic" onclick="aGoHome()" style="font-size:22px">‹</div>
-            <div class="nbar-tt">好友请求</div>
-            <div class="nbar-right"></div>
-          </div>
-          <div class="fr-body">
-            <div class="fr-sec-title" id="fr-pending-label">待处理</div>
-            <div class="fr-card" id="fr-card-zhangwei">
-              <div class="fr-user">
-                <div class="fr-av">张</div>
-                <div class="fr-info">
-                  <div class="fr-name">老张</div>
-                  <div class="fr-phone">138****5678</div>
-                </div>
-              </div>
-              <div class="fr-msg">我是老张，加个好友方便联系</div>
-              <div class="fr-btns">
-                <button class="fr-reject" onclick="frHandle('zhangwei','reject')">拒绝</button>
-                <button class="fr-accept" onclick="frHandle('zhangwei','accept')">同意</button>
-              </div>
-            </div>
-            <div class="fr-sec-title" id="fr-processed-label">已处理</div>
-            <div id="fr-processed-list">
-              <div class="fr-processed">
-                <div class="frp-av">李</div>
-                <div class="frp-name">小李</div>
-                <div class="frp-status accepted">已同意 · 3月1日</div>
-              </div>
-              <div class="fr-processed">
-                <div class="frp-av">赵</div>
-                <div class="frp-name">小赵</div>
-                <div class="frp-status rejected">已拒绝 · 2月28日</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- A-ext-chat：联系人对话 -->
         <div class="view" id="A-ext-chat">
           <div class="sbar">
@@ -751,7 +824,7 @@ body {
         <div class="sidebar" id="A-sidebar">
           <div class="sb-head">
             <h2>对话</h2>
-            <div class="sb-add-btn" onclick="aStartAddFriend();toggleSidebar('A')">+</div>
+            <div class="sb-add-btn" onclick="openScanner('A')">+</div>
           </div>
           <div class="sb-search">🔍 搜索对话...</div>
           <div class="sb-list">
@@ -779,9 +852,47 @@ body {
             </div>
           </div>
           <div class="sb-foot">
-            <div class="sb-req-row" onclick="aOpenReqList()">
-              <div class="sb-req-dot" id="A-req-dot"></div><span id="A-req-label">好友请求 (1)</span>
+            <div class="sb-qr-btn" onclick="openQR('A');toggleSidebar('A')">
+              <div class="sb-qr-ico">⬛</div>我的账号
             </div>
+          </div>
+        </div>
+
+        <!-- A 二维码弹窗 -->
+        <div class="qr-overlay" id="A-qr-ov" onclick="closeQR('A')">
+          <div class="qr-sheet" onclick="event.stopPropagation()">
+            <div class="qr-hd">
+              <div class="qr-ttl">我的账号</div>
+              <div class="qr-cls" onclick="closeQR('A')">✕</div>
+            </div>
+            <div class="qr-wrap">
+              <canvas id="A-qr-canvas" width="186" height="186"></canvas>
+            </div>
+            <div class="qr-countdown">剩余有效时间 <span id="A-qr-secs">60</span> 秒</div>
+            <button class="qr-btn" onclick="refreshQR('A')">↻ 刷新二维码</button>
+          </div>
+        </div>
+
+        <!-- A 扫码界面 -->
+        <div class="scan-ov" id="A-scan-ov">
+          <div class="scan-topbar">
+            <div class="scan-back" onclick="closeScanner('A')">✕</div>
+            <div class="scan-ttl">扫码添加好友</div>
+            <div style="width:30px"></div>
+          </div>
+          <div class="scan-mid">
+            <div class="scan-box">
+              <div class="sc sc-tl"></div>
+              <div class="sc sc-tr"></div>
+              <div class="sc sc-bl"></div>
+              <div class="sc sc-br"></div>
+              <div class="scan-line-el" id="A-scan-line"></div>
+              <div class="scan-ok" id="A-scan-ok">✓ 识别成功</div>
+            </div>
+            <div class="scan-hint">将对方的二维码放入框内即可识别</div>
+          </div>
+          <div class="scan-album">
+            <button class="scan-album-btn">从相册选取</button>
           </div>
         </div>
 
@@ -819,9 +930,6 @@ body {
               <button class="home-action"><div class="hico" style="background:#34C759">💬</div>发短信</button>
               <button class="home-action"><div class="hico" style="background:#5AC8FA">🌤</div>查天气</button>
               <button class="home-action"><div class="hico" style="background:#007AFF">👤</div>查联系人</button>
-              <button class="home-action friend">
-                <div class="hico" style="background:linear-gradient(135deg,#667eea,#764ba2)">🤝</div>添加好友
-              </button>
             </div>
           </div>
           <div class="home-input">
@@ -853,6 +961,28 @@ body {
           </div>
         </div>
 
+        <!-- B-ext-chat：联系人对话 -->
+        <div class="view" id="B-ext-chat">
+          <div class="sbar">
+            <span id="timeB2">12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="toggleSidebar('B')">☰</div>
+            <div class="nbar-tt" id="B-ext-title">玄机用户·A</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="chat-body" id="B-ext-msgs"></div>
+          <div class="chat-ibar">
+            <div class="chat-ibar-plus">+</div>
+            <div class="chat-input-wrap">
+              <input class="chat-input-real" type="text" inputmode="none" placeholder="拈花一笑，且问玄机...">
+              <button class="chat-send" disabled>➤</button>
+            </div>
+            <div class="chat-ibar-mic">🎙</div>
+          </div>
+        </div>
+
         <!-- 侧边栏 B -->
         <div class="sb-ov" id="B-sb-ov" onclick="toggleSidebar('B')"></div>
         <div class="sidebar" id="B-sidebar">
@@ -862,7 +992,7 @@ body {
           </div>
           <div class="sb-search">🔍 搜索对话...</div>
           <div class="sb-list">
-            <div class="sb-item pinned">
+            <div class="sb-item pinned" onclick="bGoHomeFromSidebar()">
               <div class="sb-av bot">🤖</div>
               <div class="sb-info">
                 <div class="sb-name">我的助理 <span class="sb-pin">置顶</span></div>
@@ -871,9 +1001,24 @@ body {
             </div>
           </div>
           <div class="sb-foot">
-            <div class="sb-req-row" id="B-req-row" style="display:none">
-              <div class="sb-req-dot"></div>好友请求 (1)
+            <div class="sb-qr-btn" onclick="openQR('B');toggleSidebar('B')">
+              <div class="sb-qr-ico">⬛</div>我的账号
             </div>
+          </div>
+        </div>
+
+        <!-- B 二维码弹窗 -->
+        <div class="qr-overlay" id="B-qr-ov" onclick="closeQR('B')">
+          <div class="qr-sheet" onclick="event.stopPropagation()">
+            <div class="qr-hd">
+              <div class="qr-ttl">我的账号</div>
+              <div class="qr-cls" onclick="closeQR('B')">✕</div>
+            </div>
+            <div class="qr-wrap">
+              <canvas id="B-qr-canvas" width="186" height="186"></canvas>
+            </div>
+            <div class="qr-countdown">剩余有效时间 <span id="B-qr-secs">60</span> 秒</div>
+            <button class="qr-btn" onclick="refreshQR('B')">↻ 刷新二维码</button>
           </div>
         </div>
 
@@ -1004,11 +1149,7 @@ function aHomeSend() {
   inp.value = '';
   document.getElementById('A-home-kbd').classList.remove('show');
   document.querySelector('#A-home .home-content').classList.remove('kopen');
-  if (val.includes('添加') || val.includes('好友')) {
-    aStartAddFriend();
-  } else {
-    aEnterChat('general', val);
-  }
+  aEnterChat('general', val);
 }
 
 function aStartAddFriend() {
@@ -1159,6 +1300,100 @@ function aOnFriendAccepted() {
   openDI('A','✓','linear-gradient(135deg,#34C759,#28A745)','好友添加成功 🎉',`${escHtml(confirmedID)} 已同意您的申请`,5000);
 }
 
+/* ══════════ 扫码添加好友 ══════════ */
+let _scanTimer;
+let _aScannerActive = false;
+
+function openScanner(pid) {
+  toggleSidebar(pid);
+  const line = document.getElementById(pid + '-scan-line');
+  const ok   = document.getElementById(pid + '-scan-ok');
+  if (line) line.style.animationPlayState = 'running';
+  if (ok)   ok.style.opacity = '0';
+  document.getElementById(pid + '-scan-ov').classList.add('show');
+  if (pid === 'A') {
+    clearTimeout(_scanTimer);
+    _aScannerActive = true; /* 标记 A 正在扫描，等待 B 展示二维码 */
+  }
+}
+
+function closeScanner(pid) {
+  clearTimeout(_scanTimer);
+  if (pid === 'A') _aScannerActive = false;
+  document.getElementById(pid + '-scan-ov').classList.remove('show');
+}
+
+/* 当 B 打开二维码且 A 正在扫描时，触发识别成功 */
+function _triggerScanSuccess() {
+  _aScannerActive = false;
+  clearTimeout(_scanTimer);
+  const line = document.getElementById('A-scan-line');
+  const ok   = document.getElementById('A-scan-ok');
+  _scanTimer = setTimeout(() => {
+    if (line) line.style.animationPlayState = 'paused';
+    if (ok)   ok.style.opacity = '1';
+    _scanTimer = setTimeout(() => {
+      closeQR('B');
+      closeScanner('A');
+      _aAddFriendFromScan();
+    }, 700);
+  }, 800);
+}
+
+function _aAddFriendFromScan() {
+  aState = 'success';
+  /* 设置对话标题并清空消息 */
+  document.getElementById('A-ext-title').textContent = '玄机用户·B';
+  clearMsgs('A-ext-msgs');
+  /* 跳转到联系人对话页 */
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById('A-ext-chat').classList.add('on');
+  document.getElementById('B-home').classList.add('on');
+  /* A 端灵动岛 */
+  openDI('A', '✓', 'linear-gradient(135deg,#34C759,#28A745)',
+    '好友添加成功 🎉', '玄机用户·B 已成为你的好友', 4000);
+  /* B 端灵动岛 */
+  openDI('B', '👋', 'linear-gradient(135deg,#007AFF,#5856D6)',
+    '新好友通知', '玄机用户·A 已将你添加为好友', 4000);
+  /* 写入欢迎消息 */
+  setTimeout(() => {
+    appendMsg('A-ext-msgs', 'agent',
+      '🎉 <strong>好友添加成功！</strong><br><span style="font-size:11px;color:#555">现在可以和 玄机用户·B 的助理直接对话了</span>');
+  }, 300);
+
+  /* 在 A 侧边栏新增「玄机用户·B」入口 */
+  if (!document.getElementById('sb-contact-B')) {
+    const aList = document.querySelector('#A-sidebar .sb-list');
+    const aItem = document.createElement('div');
+    aItem.className = 'sb-item';
+    aItem.id = 'sb-contact-B';
+    aItem.onclick = () => aOpenContactChat('玄机用户·B');
+    aItem.innerHTML = `
+      <div class="sb-av usr" style="background:linear-gradient(135deg,#34C759,#28A745);color:#fff">B</div>
+      <div class="sb-info">
+        <div class="sb-name">玄机用户·B</div>
+        <div class="sb-last">刚刚成为好友</div>
+      </div>`;
+    aList.appendChild(aItem);
+  }
+
+  /* 在 B 侧边栏新增「玄机用户·A」入口 */
+  if (!document.getElementById('sb-contact-A')) {
+    const bList = document.querySelector('#B-sidebar .sb-list');
+    const bItem = document.createElement('div');
+    bItem.className = 'sb-item';
+    bItem.id = 'sb-contact-A';
+    bItem.onclick = () => bOpenContactChat('玄机用户·A');
+    bItem.innerHTML = `
+      <div class="sb-av usr" style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);color:#fff">A</div>
+      <div class="sb-info">
+        <div class="sb-name">玄机用户·A</div>
+        <div class="sb-last">刚刚成为好友</div>
+      </div>`;
+    bList.appendChild(bItem);
+  }
+}
+
 /* ══════════ 好友请求列表 ══════════ */
 function aOpenReqList() {
   toggleSidebar('A');
@@ -1241,6 +1476,23 @@ function aOpenContactChat(name) {
 }
 
 /* ══════════ B 端 ══════════ */
+function bGoHomeFromSidebar() {
+  document.getElementById('B-sb-ov').classList.remove('show');
+  document.getElementById('B-sidebar').classList.remove('show');
+  bGoHome();
+}
+
+function bOpenContactChat(name) {
+  toggleSidebar('B');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById('B-ext-chat').classList.add('on');
+  document.getElementById('A-ext-chat').classList.add('on');
+  document.getElementById('B-ext-title').textContent = name;
+  const msgs = document.getElementById('B-ext-msgs');
+  msgs.innerHTML = '';
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
 function bGoHome() {
   bState = 'home';
   showViews('A-home','B-home');
@@ -1299,11 +1551,73 @@ function bDecline() {
   appendMsg('A-msgs','agent','对方暂时拒绝了您的好友申请 🙁<br><span style="font-size:11px;color:#8E8E93">您可以稍后再试</span>');
 }
 
+/* ══════════ 二维码 ══════════ */
+const _qrTimers = {};
+
+function drawQR(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const S = 186, M = 21, cs = Math.floor(S / M);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, S, S);
+
+  /* 随机数据模块 */
+  ctx.fillStyle = '#000';
+  for (let r = 0; r < M; r++) {
+    for (let c = 0; c < M; c++) {
+      const inTL = r < 8 && c < 8;
+      const inTR = r < 8 && c >= M - 8;
+      const inBL = r >= M - 8 && c < 8;
+      if (inTL || inTR || inBL) continue;
+      if (Math.random() > 0.5) ctx.fillRect(c * cs, r * cs, cs - 1, cs - 1);
+    }
+  }
+
+  /* 定位图案（三个角） */
+  [[0,0],[( M-7)*cs,0],[0,(M-7)*cs]].forEach(([x,y]) => {
+    ctx.fillStyle = '#000'; ctx.fillRect(x, y, 7*cs, 7*cs);
+    ctx.fillStyle = '#fff'; ctx.fillRect(x+cs, y+cs, 5*cs, 5*cs);
+    ctx.fillStyle = '#000'; ctx.fillRect(x+2*cs, y+2*cs, 3*cs, 3*cs);
+  });
+}
+
+function openQR(pid) {
+  drawQR(pid + '-qr-canvas');
+  document.getElementById(pid + '-qr-ov').classList.add('show');
+  _startQRTimer(pid);
+  /* B 展示二维码时，若 A 正在扫码则触发识别 */
+  if (pid === 'B' && _aScannerActive) _triggerScanSuccess();
+}
+
+function closeQR(pid) {
+  document.getElementById(pid + '-qr-ov').classList.remove('show');
+  clearInterval(_qrTimers[pid]);
+  delete _qrTimers[pid];
+}
+
+function refreshQR(pid) {
+  clearInterval(_qrTimers[pid]);
+  drawQR(pid + '-qr-canvas');
+  _startQRTimer(pid);
+}
+
+function _startQRTimer(pid) {
+  let secs = 60;
+  const el = document.getElementById(pid + '-qr-secs');
+  if (el) el.textContent = secs;
+  _qrTimers[pid] = setInterval(() => {
+    secs--;
+    if (el) el.textContent = secs;
+    if (secs <= 0) refreshQR(pid);
+  }, 1000);
+}
+
 /* 时间 */
 function liveTime() {
   const now = new Date();
   const t = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-  ['timeA','timeA2','timeB'].forEach(id => setTime(id,t));
+  ['timeA','timeA2','timeB','timeB2'].forEach(id => setTime(id,t));
 }
 liveTime();
 setInterval(liveTime, 30000);
