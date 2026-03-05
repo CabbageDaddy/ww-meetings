@@ -75,79 +75,175 @@ body {
   overflow:hidden; display:flex; flex-direction:column; position:relative;
 }
 
-/* 状态栏 */
+/* 状态栏（Figma 设计） */
 .sbar {
-  height:44px; padding:12px 20px 0;
-  display:flex; justify-content:space-between; align-items:center;
-  font-size:11.5px; font-weight:600; color:#1C1C1E; flex-shrink:0;
-  background:#fff; position:relative; z-index:10;
+  height:46px; padding:12px 30px 6px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  font-size:14px; font-weight:600; color:#000; flex-shrink:0;
+  background:#f7f7f7; position:relative; z-index:10;
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
 }
 .sbar-r { display:flex; gap:3px; align-items:center; font-size:10px; }
 
-/* 导航栏 */
+/* 导航栏（Figma 设计） */
 .nbar {
-  height:46px; padding:0 16px; border-bottom:0.5px solid #f0f0f0;
+  height:56px; padding:8px 20px;
   display:flex; justify-content:space-between; align-items:center;
-  flex-shrink:0; background:#fff; position:relative; z-index:10;
+  flex-shrink:0; background:#f7f7f7; position:relative; z-index:10;
 }
-.nbar-ic { font-size:20px; color:#555; width:30px; text-align:center; cursor:pointer; user-select:none; }
-.nbar-tt { font-size:16px; font-weight:600; color:#1a1a1a; }
-.nbar-right { display:flex; gap:2px; align-items:center; font-size:13px; color:#666; cursor:pointer; }
+.nbar-ic { 
+  font-size:28px; color:#000; width:40px; height:40px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; user-select:none; 
+}
+.nbar-tt { 
+  font-size:20px; font-weight:500; color:#000; 
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
+}
+.nbar-right { 
+  width:40px; height:40px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; color:#000; cursor:pointer; 
+}
 
 /* ─────────────────────────────────────
-   首页（prototype.html 风格）
+   首页（Figma 设计风格）
 ───────────────────────────────────── */
 .home-content {
   flex:1; display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  padding:0 24px; gap:22px; background:#fff;
+  padding:0 24px; gap:24px; background:#f7f7f7;
 }
 .home-logo {
-  width:62px; height:62px; border-radius:18px;
+  width:50px; height:50px; border-radius:50%;
   background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);
   display:flex; align-items:center; justify-content:center;
 }
 .home-logo .inner { width:28px; height:28px; background:#fff; border-radius:50%; }
-.home-slogan { font-size:20px; font-weight:600; color:#1a1a1a; }
+.home-slogan { 
+  font-size:24px; font-weight:500; color:#000; 
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
+}
 .home-actions { display:flex; flex-direction:column; gap:10px; width:100%; }
 .home-action {
-  display:flex; align-items:center; gap:12px;
-  padding:12px 14px; background:#f8f9fa; border-radius:12px;
-  cursor:pointer; font-size:15px; color:#333;
+  display:flex; align-items:center; gap:8px;
+  padding:12px 16px; background:#fff; border-radius:20px;
+  cursor:pointer; font-size:16px; color:rgba(0,0,0,0.8);
   border:none; width:100%; text-align:left; transition:opacity .1s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.05);
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
+  font-weight:500;
 }
 .home-action:active { opacity:.7; }
 .home-action .hico {
-  width:30px; height:30px; border-radius:8px; flex-shrink:0;
-  display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff;
+  width:24px; height:24px; border-radius:7.2px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:14px;
+  background:#f0f0f0; border:0.5px solid rgba(0,0,0,0.1);
 }
 .home-action.friend {
-  background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.07));
-  border:1.5px solid rgba(102,126,234,.25);
+  background:#fff;
+  border:none;
 }
 
-/* 首页底部输入 */
+/* 首页底部输入（Figma 设计） */
 .home-input {
-  padding:10px 16px 22px; background:#fff; border-top:0.5px solid #eee;
-  display:flex; align-items:center; gap:10px; flex-shrink:0;
+  padding:16px 16px 32px; 
+  background:linear-gradient(to bottom, rgba(247,247,247,0) 0%, #f7f7f7 40%);
+  display:flex; flex-direction:column; align-items:center; gap:16px; flex-shrink:0;
 }
-.home-input .hi-plus {
-  width:28px; height:28px; border-radius:50%; border:1.5px solid #ccc;
+.home-input-card {
+  width:100%; background:#fff; border-radius:20px; 
+  padding:10px; display:flex; align-items:center; gap:10px;
+  box-shadow:0 3px 12px rgba(0,0,0,0.04);
+  border:0.5px solid rgba(0,0,0,0.1);
+}
+.home-input .hi-voice {
+  width:32px; height:32px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  color:#999; font-size:17px; flex-shrink:0; cursor:pointer;
+  color:rgba(0,0,0,0.6); font-size:20px; flex-shrink:0; cursor:pointer;
+  background:transparent;
 }
 .home-input .hi-inp {
-  flex:1; background:#f5f5f5; border-radius:18px; padding:8px 14px;
-  font-size:13px; color:#AEAEB2; cursor:pointer;
+  flex:1; background:transparent; border:none; outline:none;
+  padding:0; font-size:16px; color:rgba(0,0,0,0.4); cursor:pointer;
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
 }
-.home-input .hi-mic { font-size:19px; color:#999; }
+.home-input .hi-add { 
+  width:32px; height:32px; font-size:20px; color:rgba(0,0,0,0.6);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+/* Home Indicator */
+.home-indicator {
+  width:152px; height:4px; background:rgba(0,0,0,0.8);
+  border-radius:4px;
+}
+
+/* ─────────────────────────────────────
+   设置页面
+───────────────────────────────────── */
+.settings-page {
+  flex:1; display:flex; flex-direction:column;
+  background:#f7f7f7; overflow-y:auto;
+  padding:12px 12px 28px;
+}
+.settings-header-card {
+  background:linear-gradient(to bottom, #e8e8ff, #f0f0ff, #fff);
+  border-radius:16px; height:200px;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:16px; margin-bottom:12px;
+  border:0.5px solid rgba(0,0,0,0.1);
+}
+.settings-logo {
+  width:50px; height:50px; border-radius:50%;
+  background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);
+  display:flex; align-items:center; justify-content:center;
+}
+.settings-logo .inner { width:28px; height:28px; background:#fff; border-radius:50%; }
+.settings-app-name { font-size:20px; font-weight:600; color:#000; }
+.settings-app-version { font-size:12px; color:rgba(0,0,0,0.4); }
+
+.settings-section { margin-bottom:12px; }
+.settings-section-title {
+  font-size:14px; color:#8c9db0; padding:6px 16px;
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
+}
+.settings-card {
+  background:#fff; border-radius:16px; overflow:hidden;
+}
+.settings-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; cursor:pointer; background:#fff;
+  border-bottom:0.5px solid #f5f5f5;
+}
+.settings-item:last-child { border-bottom:none; }
+.settings-item:active { background:#f5f5f5; }
+.settings-item-content { flex:1; }
+.settings-item-title {
+  font-size:16px; font-weight:500; color:#000;
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
+}
+.settings-item-subtitle {
+  font-size:13px; color:rgba(0,0,0,0.6); margin-top:2px;
+  font-family: "MiSans", -apple-system, "PingFang SC", sans-serif;
+}
+.settings-item-arrow {
+  width:18px; height:18px; color:rgba(0,0,0,0.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+}
 
 /* 首页键盘展开时，内容区改为从顶部滚动 */
 .home-content.kopen {
+  flex: 0 1 auto;
   justify-content: flex-start;
   overflow-y: auto;
   padding-top: 20px;
-  padding-bottom: 268px; /* 避免内容被键盘遮住 */
+  padding-bottom: 20px;
+  min-height: 200px;
+}
+/* 键盘展开时隐藏底部输入栏 */
+.view .home-input.kopen-hide {
+  display: none;
 }
 
 /* ─────────────────────────────────────
@@ -161,11 +257,11 @@ body {
 .sb-ov.show { opacity:1; pointer-events:auto; }
 
 .sidebar {
-  position:absolute; top:0; left:0; width:80%; height:100%;
+  position:absolute; top:0; left:0; width:100%; height:100%;
   background:#fff; z-index:60;
   transform:translateX(-100%); transition:transform .3s ease;
   display:flex; flex-direction:column;
-  border-radius:0 16px 16px 0;
+  border-radius:0;
 }
 .sidebar.show { transform:translateX(0); }
 
@@ -174,6 +270,11 @@ body {
   justify-content:space-between; border-bottom:0.5px solid #f0f0f0;
 }
 .sb-head h2 { font-size:22px; font-weight:700; color:#1a1a1a; }
+.sb-back-btn {
+  width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+  font-size:26px; color:#1a1a1a; cursor:pointer; flex-shrink:0; line-height:1;
+}
+.sb-back-btn:active { opacity:.5; }
 .sb-add-btn {
   width:34px; height:34px; border-radius:50%; background:#007AFF;
   color:#fff; display:flex; align-items:center; justify-content:center;
@@ -202,6 +303,104 @@ body {
 .sb-pin { font-size:10px; color:#007AFF; border:1px solid #007AFF; border-radius:4px; padding:1px 4px; }
 .sb-last { font-size:12px; color:#999; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .sb-badge { width:18px; height:18px; border-radius:50%; background:#FF3B30; color:#fff; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+
+/* ── 左滑删除 ── */
+.sb-item-wrap { position:relative; overflow:hidden; }
+.sb-del-btn {
+  position:absolute; right:0; top:0; bottom:0; width:72px;
+  background:#FF3B30; color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:600; cursor:pointer; user-select:none;
+}
+.sb-del-btn:active { background:#C0392B; }
+.sb-item-wrap > .sb-item { background:#fff; position:relative; z-index:1; }
+
+/* ── 侧边栏搜索行（含通讯录按钮） ── */
+.sb-search-row { display:flex; align-items:center; gap:8px; margin:10px 16px; }
+.sb-search-row .sb-search { flex:1; margin:0; }
+.sb-contacts-btn {
+  width:34px; height:34px; border-radius:10px;
+  background:#f0f0f0; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; cursor:pointer; user-select:none;
+}
+.sb-contacts-btn:active { background:#ddd; }
+
+/* ── 通讯录页 ── */
+.contacts-body { flex:1; overflow-y:auto; background:#f5f5f5; }
+.contacts-sec-title { font-size:12px; color:#8E8E93; font-weight:500; padding:14px 16px 6px; }
+.contact-row {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; background:#fff; cursor:pointer;
+  border-bottom:0.5px solid #f0f0f0;
+}
+.contact-row:active { background:#f5f5f5; }
+.contact-av {
+  width:42px; height:42px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:600;
+}
+.contact-name { font-size:15px; color:#1a1a1a; font-weight:500; }
+.contact-sub  { font-size:12px; color:#999; margin-top:2px; }
+.contacts-empty { text-align:center; color:#999; font-size:14px; padding:50px 20px; }
+
+/* ── 通讯录联系人操作弹窗（bottom sheet） ── */
+.contact-sheet-ov {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.4); z-index:250;
+  display:flex; align-items:flex-end;
+  opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.contact-sheet-ov.show { opacity:1; pointer-events:auto; }
+.contact-sheet {
+  width:100%; background:#fff; border-radius:16px 16px 0 0; padding-bottom:8px;
+  transform:translateY(100%); transition:transform .28s ease;
+}
+.contact-sheet-ov.show .contact-sheet { transform:translateY(0); }
+.cs-header {
+  display:flex; align-items:center; gap:12px;
+  padding:16px 16px 14px; border-bottom:0.5px solid #f0f0f0;
+}
+.cs-av {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:600;
+}
+.cs-name { font-size:16px; font-weight:600; color:#1a1a1a; }
+.cs-btn {
+  padding:15px 20px; font-size:15px; color:#1a1a1a; cursor:pointer;
+  border-bottom:0.5px solid #f5f5f5;
+}
+.cs-btn:active { background:#f5f5f5; }
+.cs-btn.cs-del { color:#FF3B30; }
+.cs-cancel {
+  margin:8px 12px 0; padding:13px; border-radius:12px;
+  background:#f5f5f5; color:#8E8E93;
+  font-size:15px; text-align:center; cursor:pointer;
+}
+.cs-cancel:active { background:#e8e8e8; }
+
+/* ── 删除好友二次确认 ── */
+.confirm-del-ov {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.45); z-index:260;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .2s;
+}
+.confirm-del-ov.show { opacity:1; pointer-events:auto; }
+.confirm-del-dlg {
+  background:#fff; border-radius:14px; width:78%;
+  padding:22px 16px 14px; text-align:center;
+  transform:scale(.9); transition:transform .2s;
+}
+.confirm-del-ov.show .confirm-del-dlg { transform:scale(1); }
+.cdlg-title { font-size:16px; font-weight:600; color:#1a1a1a; margin-bottom:8px; }
+.cdlg-msg   { font-size:13px; color:#555; line-height:1.55; margin-bottom:18px; }
+.cdlg-btns  { display:flex; gap:8px; }
+.cdlg-cancel  { flex:1; padding:10px; border-radius:10px; background:#f5f5f5; color:#666; border:none; font-size:14px; cursor:pointer; }
+.cdlg-confirm { flex:1; padding:10px; border-radius:10px; background:#FF3B30; color:#fff; border:none; font-size:14px; font-weight:600; cursor:pointer; }
+.cdlg-confirm:active { background:#C0392B; }
+
 .sb-foot { padding:12px 16px 24px; border-top:0.5px solid #eee; }
 .sb-req-row { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:#333; cursor:pointer; padding:6px 0; }
 .sb-req-dot { width:8px; height:8px; border-radius:50%; background:#FF3B30; }
@@ -374,7 +573,7 @@ body {
 .chat-ibar-mic { font-size:19px; color:#999; }
 
 /* 屏幕层切换 */
-.view { display:none; flex-direction:column; height:100%; }
+.view { display:none; flex-direction:column; height:100%; position:relative; }
 .view.on { display:flex; }
 
 /* ── 扫码界面 ── */
@@ -496,6 +695,93 @@ body {
 }
 .qr-btn:active { background:#e8e8e8; }
 
+/* ── 用户信息底部弹窗 ── */
+.user-info-overlay {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.5); z-index:200;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+  display:flex; align-items:flex-end;
+}
+.user-info-overlay.show { opacity:1; pointer-events:auto; }
+.user-info-sheet {
+  background:#fff; border-radius:20px 20px 0 0; width:100%;
+  padding:18px 20px 32px;
+  transform:translateY(100%); transition:transform .3s ease;
+}
+.user-info-overlay.show .user-info-sheet { transform:translateY(0); }
+.user-info-hd {
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;
+}
+.user-info-ttl { font-size:16px; font-weight:600; color:#1a1a1a; }
+.user-info-cls {
+  width:26px; height:26px; border-radius:50%; background:#f0f0f0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; color:#666; cursor:pointer;
+}
+.user-info-cls:active { background:#ddd; }
+.user-info-content {
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  padding:20px 0;
+}
+.user-info-avatar {
+  width:80px; height:80px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:32px; font-weight:600; color:#fff;
+}
+.user-info-name {
+  font-size:20px; font-weight:600; color:#1a1a1a;
+}
+.user-info-id {
+  font-size:13px; color:#8E8E93;
+}
+.user-info-delete-btn {
+  display:block; width:100%; padding:12px;
+  background:#FF3B30; color:#fff; border:none;
+  border-radius:12px; font-size:14px; font-weight:600; cursor:pointer;
+  margin-top:12px;
+}
+.user-info-delete-btn:active { background:#d32f2f; }
+
+/* ── 删除好友确认对话框 ── */
+.delete-confirm-overlay {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,.5); z-index:210;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.delete-confirm-overlay.show { opacity:1; pointer-events:auto; }
+.delete-confirm-dialog {
+  background:#fff; border-radius:14px; width:100%; max-width:280px;
+  overflow:hidden;
+  transform:scale(0.9); transition:transform .3s ease;
+}
+.delete-confirm-overlay.show .delete-confirm-dialog { transform:scale(1); }
+.delete-confirm-title {
+  font-size:17px; font-weight:600; color:#1a1a1a;
+  padding:20px 16px 8px; text-align:center;
+}
+.delete-confirm-message {
+  font-size:13px; color:#8E8E93;
+  padding:0 16px 20px; text-align:center; line-height:1.4;
+}
+.delete-confirm-buttons {
+  border-top:0.5px solid #e0e0e0;
+  display:flex;
+}
+.delete-confirm-btn {
+  flex:1; padding:12px; background:transparent; border:none;
+  font-size:17px; cursor:pointer; color:#007AFF;
+}
+.delete-confirm-btn:active { background:#f0f0f0; }
+.delete-confirm-btn.cancel {
+  border-right:0.5px solid #e0e0e0;
+  font-weight:400;
+}
+.delete-confirm-btn.confirm {
+  color:#FF3B30; font-weight:600;
+}
+
 /* ── iOS 风格键盘基础 ── */
 .kbd-overlay {
   position:absolute; bottom:0; left:0; right:0;
@@ -579,13 +865,71 @@ body {
 .npk.act { background:#007AFF; }
 .npk.act:active { background:#0060cc; }
 .npk.act .nm { color:#fff; font-size:16px; font-weight:600; }
+
+/* ── 底部 Tab Bar ── */
+.tab-content { flex:1; display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+.tab-panel { display:none; flex-direction:column; flex:1; overflow:hidden; }
+.tab-panel.active { display:flex; }
+.tab-empty {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:6px;
+  background:#f7f7f7;
+}
+.tab-empty-title { font-size:15px; font-weight:500; color:#3C3C43; }
+.tab-empty-sub { font-size:13px; color:#8E8E93; text-align:center; padding:0 24px; }
+.tab-bar-wrap { padding:6px 10px 10px; background:#f7f7f7; flex-shrink:0; }
+.tab-bar {
+  display:flex; align-items:center;
+  background:#dcdcdc; border-radius:22px; padding:4px;
+}
+.tab-item {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; padding:7px 4px 6px; border-radius:18px;
+  cursor:pointer; user-select:none; transition:background .18s; gap:3px;
+}
+.tab-item.active { background:#1C1C1E; }
+.tab-item:active:not(.active) { background:rgba(0,0,0,.08); }
+.tab-icon { display:flex; align-items:center; justify-content:center; color:#8E8E93; }
+.tab-icon svg { width:20px; height:20px; }
+.tab-item.active .tab-icon { color:#fff; }
+.tab-label { font-size:10px; font-weight:500; color:#8E8E93; line-height:1; }
+.tab-item.active .tab-label { color:#fff; }
+
+/* ── 设备分组 ── */
+.sb-group-hd {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 16px 8px; cursor:pointer; user-select:none;
+}
+.sb-group-hd:active { background:#f5f5f5; }
+.sb-group-title { font-size:12px; font-weight:500; color:#8E8E93; }
+.sb-group-arrow {
+  font-size:14px; color:#C7C7CC;
+  transition:transform .22s ease; display:inline-block;
+}
+.sb-group-arrow.open { transform:rotate(90deg); }
+.sb-group-list {
+  overflow:hidden; max-height:0;
+  transition:max-height .25s ease;
+}
+.sb-group-list.open { max-height:200px; }
+.sb-device-item {
+  display:flex; align-items:center; gap:11px;
+  padding:9px 16px 9px 20px; cursor:pointer;
+}
+.sb-device-item:active { background:#f5f5f5; }
+.sb-device-ico {
+  width:36px; height:36px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:#f0f0f0; font-size:18px;
+}
+.sb-device-name { font-size:14px; color:#1a1a1a; font-weight:500; }
+
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>玄机 Bash · 添加好友交互原型</h1>
-  <p>直接在输入框打字，体验完整流程 · 支持任意手机号或 ID（B的手机号是 1111）</p>
 </div>
 
 <div class="phones-row">
@@ -604,36 +948,74 @@ body {
         <!-- A-home -->
         <div class="view on" id="A-home">
           <div class="sbar">
-            <span id="timeA">12:19</span>
-            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+            <span id="timeA">2:36</span>
+            <div class="sbar-r"><span>5G</span><span>📶</span><span>🔋</span></div>
           </div>
           <div class="nbar">
-            <div class="nbar-ic" onclick="toggleSidebar('A')">☰</div>
-            <div class="nbar-tt">玄机 Bash</div>
-            <div class="nbar-right"></div>
+            <div class="nbar-ic" onclick="toggleSidebar('A')"><svg viewBox="0 0 28 28" fill="none"><path d="M5 19.5c.2.1.3.3.3.5l-.5 1.7c0 .2.1.3.3.3.9-.3 3.4-1 5-1.5 1.7-.5 2.8-.8 4.3-1.7 1.9-1.1 3.6-3 3.6-6.2 0-4.3-4.1-7.6-9.1-7.6C4.6 4 0 7 0 11.8c0 2.2 1.1 4 2.7 5.3.7.6 1.6 1.1 2.3 1.4z" transform="translate(4.5 3)" stroke="black" stroke-width="1.5" fill="none"/></svg></div>
+            <div class="nbar-tt">玄机</div>
+            <div class="nbar-right" onclick="openSettings('A')">⋮</div>
           </div>
-          <div class="home-content">
-            <div class="home-logo"><div class="inner"></div></div>
-            <div class="home-slogan">拈花一笑，且问玄机</div>
-            <div class="home-actions">
-              <button class="home-action" onclick="aEnterChat('calendar')">
-                <div class="hico" style="background:#007AFF">📅</div>查日程
-              </button>
-              <button class="home-action" onclick="aEnterChat('sms')">
-                <div class="hico" style="background:#34C759">💬</div>发短信
-              </button>
-              <button class="home-action" onclick="aEnterChat('weather')">
-                <div class="hico" style="background:#5AC8FA">🌤</div>查天气
-              </button>
-              <button class="home-action" onclick="aEnterChat('contacts')">
-                <div class="hico" style="background:#007AFF">👤</div>查联系人
-              </button>
+          <div class="tab-content">
+            <!-- 对话 panel -->
+            <div class="tab-panel active" id="A-panel-chat">
+              <div class="home-content">
+                <div class="home-logo"><div class="inner"></div></div>
+                <div class="home-slogan">有什么可以帮忙？</div>
+                <div class="home-actions">
+                  <button class="home-action" onclick="aEnterChat('calendar')">
+                    <div class="hico">📅</div>查日程
+                  </button>
+                  <button class="home-action" onclick="aEnterChat('sms')">
+                    <div class="hico">💬</div>发短信
+                  </button>
+                  <button class="home-action" onclick="aEnterChat('weather')">
+                    <div class="hico">🌤</div>查天气
+                  </button>
+                  <button class="home-action" onclick="aEnterChat('contacts')">
+                    <div class="hico">👤</div>查联系人
+                  </button>
+                </div>
+              </div>
+              <div class="home-input">
+                <div class="home-input-card">
+                  <div class="hi-voice" onclick="aHomeInputClick()">🎙</div>
+                  <input class="hi-inp" placeholder="发消息或按住说话" onclick="aHomeInputClick()" readonly>
+                  <div class="hi-add">+</div>
+                </div>
+              </div>
+            </div>
+            <!-- 智能体 panel -->
+            <div class="tab-panel" id="A-panel-agent">
+              <div class="tab-empty">
+                <div class="tab-empty-title">暂无智能体</div>
+                <div class="tab-empty-sub">在对话中让 AI 创建智能体</div>
+              </div>
+            </div>
+            <!-- 资料 panel -->
+            <div class="tab-panel" id="A-panel-files">
+              <div class="tab-empty">
+                <div class="tab-empty-title">暂无资料</div>
+                <div class="tab-empty-sub">在对话中产生的文档会自动归档到这里</div>
+              </div>
             </div>
           </div>
-          <div class="home-input">
-            <div class="hi-plus">+</div>
-            <div class="hi-inp" onclick="aHomeInputClick()">拈花一笑，且问玄机...</div>
-            <div class="hi-mic">🎙</div>
+          <!-- Tab Bar -->
+          <div class="tab-bar-wrap">
+            <div class="tab-bar">
+              <div class="tab-item active" id="A-ti-chat" onclick="switchTab('A','chat')">
+                <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <div class="tab-label">对话</div>
+              </div>
+              <div class="tab-item" id="A-ti-agent" onclick="switchTab('A','agent')">
+                <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10.5" r="1" fill="currentColor" stroke="none"/><path d="M8.5 14.5s1 1.5 3.5 1.5 3.5-1.5 3.5-1.5"/></svg></div>
+                <div class="tab-label">智能体</div>
+              </div>
+              <div class="tab-item" id="A-ti-files" onclick="switchTab('A','files')">
+                <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg></div>
+                <div class="tab-label">资料</div>
+              </div>
+            </div>
           </div>
           <!-- 首页键盘（QWERTY） -->
           <div class="kbd-overlay" id="A-home-kbd">
@@ -804,7 +1186,7 @@ body {
             <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
           </div>
           <div class="nbar">
-            <div class="nbar-ic" onclick="toggleSidebar('A')">☰</div>
+            <div class="nbar-ic" onclick="aBackToSidebar('A')" style="font-size:22px">‹</div>
             <div class="nbar-tt" id="A-ext-title">小王</div>
             <div class="nbar-right"></div>
           </div>
@@ -819,41 +1201,201 @@ body {
           </div>
         </div>
 
+        <!-- A-settings: 设置页 -->
+        <div class="view" id="A-settings">
+          <div class="sbar">
+            <span id="timeA5">2:36</span>
+            <div class="sbar-r"><span>5G</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="closeSettings('A')" style="font-size:22px">‹</div>
+            <div class="nbar-tt">设置</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="settings-page">
+            <!-- Header Card -->
+            <div class="settings-header-card">
+              <div class="settings-logo"><div class="inner"></div></div>
+              <div style="text-align:center">
+                <div class="settings-app-name">OSbot</div>
+                <div class="settings-app-version">v1.0 · AI 助手</div>
+              </div>
+            </div>
+
+            <!-- 账号 -->
+            <div class="settings-section">
+              <div class="settings-section-title">账号</div>
+              <div class="settings-card">
+                <div class="settings-item" onclick="openQR('A')">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">我的账号</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LLM 配置 -->
+            <div class="settings-section">
+              <div class="settings-section-title">LLM 配置</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">LLM 设置</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">系统提示词</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 配置 -->
+            <div class="settings-section">
+              <div class="settings-section-title">Agent 配置</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">MCP 服务器</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">SubAgent 配置</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">工具管理</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">Skill 商店</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">米家授权</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 功能配置 -->
+            <div class="settings-section">
+              <div class="settings-section-title">功能配置</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">语音识别引擎</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 数据与安全 -->
+            <div class="settings-section">
+              <div class="settings-section-title">数据与安全</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">网站凭据管理</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">清理历史对话</div>
+                    <div class="settings-item-subtitle">816个对话</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="height:16px; display:flex; align-items:center; justify-content:center; background:#f7f7f7">
+            <div class="home-indicator"></div>
+          </div>
+        </div>
+
+        <!-- A-contacts: 通讯录 -->
+        <div class="view" id="A-contacts">
+          <div class="sbar">
+            <span id="timeA4">12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="closeContacts('A')" style="font-size:22px">‹</div>
+            <div class="nbar-tt">通讯录</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="contacts-body" id="A-contacts-body"></div>
+        </div>
+
         <!-- 侧边栏 A -->
         <div class="sb-ov" id="A-sb-ov" onclick="toggleSidebar('A')"></div>
         <div class="sidebar" id="A-sidebar">
           <div class="sb-head">
-            <h2>对话</h2>
+            <div class="sb-back-btn" onclick="aGoHomeFromSidebar()">‹</div>
+            <h2>我的话题</h2>
             <div class="sb-add-btn" onclick="openScanner('A')">+</div>
           </div>
-          <div class="sb-search">🔍 搜索对话...</div>
+          <div class="sb-search-row">
+            <div class="sb-search">🔍 搜索对话...</div>
+          </div>
           <div class="sb-list">
             <div class="sb-item pinned" onclick="aGoHomeFromSidebar()">
               <div class="sb-av bot">🤖</div>
               <div class="sb-info">
-                <div class="sb-name">我的助理 <span class="sb-pin">置顶</span></div>
+                <div class="sb-name">玄机 <span class="sb-pin">置顶</span></div>
                 <div class="sb-last">拈花一笑，且问玄机</div>
               </div>
             </div>
-            <div class="sb-item" onclick="aOpenContactChat('小王')">
-              <div class="sb-av usr">王</div>
-              <div class="sb-info">
+            <div class="sb-item">
+              <div class="sb-av usr" onclick="event.stopPropagation(); showUserInfo('A', '小王', 'user_xiaowang_001', '#e8e8e8', '王')">王</div>
+              <div class="sb-info" onclick="aOpenContactChat('小王')">
                 <div class="sb-name">小王</div>
                 <div class="sb-last">排号还有3桌，快到了</div>
               </div>
               <div class="sb-badge">2</div>
             </div>
-            <div class="sb-item" onclick="aOpenContactChat('李总')">
-              <div class="sb-av usr">李</div>
-              <div class="sb-info">
+            <div class="sb-item">
+              <div class="sb-av usr" onclick="event.stopPropagation(); showUserInfo('A', '李总', 'user_lizong_002', '#e8e8e8', '李')">李</div>
+              <div class="sb-info" onclick="aOpenContactChat('李总')">
                 <div class="sb-name">李总</div>
                 <div class="sb-last">会议已确认</div>
               </div>
             </div>
           </div>
           <div class="sb-foot">
-            <div class="sb-qr-btn" onclick="openQR('A');toggleSidebar('A')">
-              <div class="sb-qr-ico">⬛</div>我的账号
+            <div class="sb-group-hd" onclick="toggleDeviceGroup('A')">
+              <span class="sb-group-title">我的设备</span>
+              <span class="sb-group-arrow" id="A-device-arrow">›</span>
+            </div>
+            <div class="sb-group-list" id="A-device-list">
+              <div class="sb-device-item" onclick="aOpenContactChat('我的红米')">
+                <div class="sb-device-ico">📱</div>
+                <span class="sb-device-name">我的红米</span>
+              </div>
+              <div class="sb-device-item" onclick="aOpenContactChat('我的 Pad')">
+                <div class="sb-device-ico">📋</div>
+                <span class="sb-device-name">我的 Pad</span>
+              </div>
+              <div class="sb-device-item" onclick="aOpenContactChat('我的汽车')">
+                <div class="sb-device-ico">🚗</div>
+                <span class="sb-device-name">我的汽车</span>
+              </div>
             </div>
           </div>
         </div>
@@ -891,8 +1433,58 @@ body {
             </div>
             <div class="scan-hint">将对方的二维码放入框内即可识别</div>
           </div>
-          <div class="scan-album">
-            <button class="scan-album-btn">从相册选取</button>
+        </div>
+
+        <!-- A 用户信息弹窗 -->
+        <div class="user-info-overlay" id="A-user-info-ov" onclick="closeUserInfo('A')">
+          <div class="user-info-sheet" onclick="event.stopPropagation()">
+            <div class="user-info-hd">
+              <div class="user-info-ttl">用户信息</div>
+              <div class="user-info-cls" onclick="closeUserInfo('A')">✕</div>
+            </div>
+            <div class="user-info-content">
+              <div class="user-info-avatar" id="A-user-info-avatar"></div>
+              <div class="user-info-name" id="A-user-info-name"></div>
+              <div class="user-info-id" id="A-user-info-id"></div>
+            </div>
+            <button class="user-info-delete-btn" id="A-user-info-delete-btn">删除好友</button>
+          </div>
+        </div>
+
+        <!-- A 删除好友确认对话框 -->
+        <div class="delete-confirm-overlay" id="A-delete-confirm-ov" onclick="closeDeleteConfirm('A')">
+          <div class="delete-confirm-dialog" onclick="event.stopPropagation()">
+            <div class="delete-confirm-title">删除好友</div>
+            <div class="delete-confirm-message" id="A-delete-confirm-msg"></div>
+            <div class="delete-confirm-buttons">
+              <button class="delete-confirm-btn cancel" onclick="closeDeleteConfirm('A')">取消</button>
+              <button class="delete-confirm-btn confirm" id="A-delete-confirm-btn">删除</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- A 通讯录操作弹窗 -->
+        <div class="contact-sheet-ov" id="A-contact-sheet" onclick="_hideContactSheet('A')">
+          <div class="contact-sheet" onclick="event.stopPropagation()">
+            <div class="cs-header">
+              <div class="cs-av" id="A-cs-av"></div>
+              <div class="cs-name" id="A-cs-name"></div>
+            </div>
+            <div class="cs-btn" onclick="_doSendMessage()">发消息</div>
+            <div class="cs-btn cs-del" onclick="_doDeleteFriend()">删除好友</div>
+            <div class="cs-cancel" onclick="_hideContactSheet('A')">取消</div>
+          </div>
+        </div>
+
+        <!-- A 删除好友确认 -->
+        <div class="confirm-del-ov" id="A-confirm-del" onclick="_hideConfirmDel('A')">
+          <div class="confirm-del-dlg" onclick="event.stopPropagation()">
+            <div class="cdlg-title">删除好友</div>
+            <div class="cdlg-msg" id="A-cdlg-msg"></div>
+            <div class="cdlg-btns">
+              <button class="cdlg-cancel" onclick="_hideConfirmDel('A')">取消</button>
+              <button class="cdlg-confirm" onclick="_execDeleteFriend()">确认删除</button>
+            </div>
           </div>
         </div>
 
@@ -914,28 +1506,63 @@ body {
         <!-- B-home -->
         <div class="view on" id="B-home">
           <div class="sbar">
-            <span>12:19</span>
-            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+            <span>2:36</span>
+            <div class="sbar-r"><span>5G</span><span>📶</span><span>🔋</span></div>
           </div>
           <div class="nbar">
-            <div class="nbar-ic" onclick="toggleSidebar('B')">☰</div>
-            <div class="nbar-tt">玄机 Bash</div>
-            <div class="nbar-right"></div>
+            <div class="nbar-ic" onclick="toggleSidebar('B')"><svg viewBox="0 0 28 28" fill="none"><path d="M5 19.5c.2.1.3.3.3.5l-.5 1.7c0 .2.1.3.3.3.9-.3 3.4-1 5-1.5 1.7-.5 2.8-.8 4.3-1.7 1.9-1.1 3.6-3 3.6-6.2 0-4.3-4.1-7.6-9.1-7.6C4.6 4 0 7 0 11.8c0 2.2 1.1 4 2.7 5.3.7.6 1.6 1.1 2.3 1.4z" transform="translate(4.5 3)" stroke="black" stroke-width="1.5" fill="none"/></svg></div>
+            <div class="nbar-tt">玄机</div>
+            <div class="nbar-right" onclick="openSettings('B')">⋮</div>
           </div>
-          <div class="home-content">
-            <div class="home-logo"><div class="inner"></div></div>
-            <div class="home-slogan">拈花一笑，且问玄机</div>
-            <div class="home-actions">
-              <button class="home-action"><div class="hico" style="background:#007AFF">📅</div>查日程</button>
-              <button class="home-action"><div class="hico" style="background:#34C759">💬</div>发短信</button>
-              <button class="home-action"><div class="hico" style="background:#5AC8FA">🌤</div>查天气</button>
-              <button class="home-action"><div class="hico" style="background:#007AFF">👤</div>查联系人</button>
+          <div class="tab-content">
+            <div class="tab-panel active" id="B-panel-chat">
+              <div class="home-content">
+                <div class="home-logo"><div class="inner"></div></div>
+                <div class="home-slogan">有什么可以帮忙？</div>
+                <div class="home-actions">
+                  <button class="home-action"><div class="hico">📅</div>查日程</button>
+                  <button class="home-action"><div class="hico">💬</div>发短信</button>
+                  <button class="home-action"><div class="hico">🌤</div>查天气</button>
+                  <button class="home-action"><div class="hico">👤</div>查联系人</button>
+                </div>
+              </div>
+              <div class="home-input">
+                <div class="home-input-card">
+                  <div class="hi-voice">🎙</div>
+                  <input class="hi-inp" placeholder="发消息或按住说话" readonly>
+                  <div class="hi-add">+</div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-panel" id="B-panel-agent">
+              <div class="tab-empty">
+                <div class="tab-empty-title">暂无智能体</div>
+                <div class="tab-empty-sub">在对话中让 AI 创建智能体</div>
+              </div>
+            </div>
+            <div class="tab-panel" id="B-panel-files">
+              <div class="tab-empty">
+                <div class="tab-empty-title">暂无资料</div>
+                <div class="tab-empty-sub">在对话中产生的文档会自动归档到这里</div>
+              </div>
             </div>
           </div>
-          <div class="home-input">
-            <div class="hi-plus">+</div>
-            <div class="hi-inp">拈花一笑，且问玄机...</div>
-            <div class="hi-mic">🎙</div>
+          <!-- Tab Bar -->
+          <div class="tab-bar-wrap">
+            <div class="tab-bar">
+              <div class="tab-item active" id="B-ti-chat" onclick="switchTab('B','chat')">
+                <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                <div class="tab-label">对话</div>
+              </div>
+              <div class="tab-item" id="B-ti-agent" onclick="switchTab('B','agent')">
+                <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10.5" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10.5" r="1" fill="currentColor" stroke="none"/><path d="M8.5 14.5s1 1.5 3.5 1.5 3.5-1.5 3.5-1.5"/></svg></div>
+                <div class="tab-label">智能体</div>
+              </div>
+              <div class="tab-item" id="B-ti-files" onclick="switchTab('B','files')">
+                <div class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg></div>
+                <div class="tab-label">资料</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -968,7 +1595,7 @@ body {
             <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
           </div>
           <div class="nbar">
-            <div class="nbar-ic" onclick="toggleSidebar('B')">☰</div>
+            <div class="nbar-ic" onclick="aBackToSidebar('B')" style="font-size:22px">‹</div>
             <div class="nbar-tt" id="B-ext-title">玄机用户·A</div>
             <div class="nbar-right"></div>
           </div>
@@ -983,26 +1610,186 @@ body {
           </div>
         </div>
 
+        <!-- B-settings: 设置页 -->
+        <div class="view" id="B-settings">
+          <div class="sbar">
+            <span id="timeB5">2:36</span>
+            <div class="sbar-r"><span>5G</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="closeSettings('B')" style="font-size:22px">‹</div>
+            <div class="nbar-tt">设置</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="settings-page">
+            <!-- Header Card -->
+            <div class="settings-header-card">
+              <div class="settings-logo"><div class="inner"></div></div>
+              <div style="text-align:center">
+                <div class="settings-app-name">OSbot</div>
+                <div class="settings-app-version">v1.0 · AI 助手</div>
+              </div>
+            </div>
+
+            <!-- 账号 -->
+            <div class="settings-section">
+              <div class="settings-section-title">账号</div>
+              <div class="settings-card">
+                <div class="settings-item" onclick="openQR('B')">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">我的账号</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LLM 配置 -->
+            <div class="settings-section">
+              <div class="settings-section-title">LLM 配置</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">LLM 设置</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">系统提示词</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent 配置 -->
+            <div class="settings-section">
+              <div class="settings-section-title">Agent 配置</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">MCP 服务器</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">SubAgent 配置</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">工具管理</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">Skill 商店</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">米家授权</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 功能配置 -->
+            <div class="settings-section">
+              <div class="settings-section-title">功能配置</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">语音识别引擎</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 数据与安全 -->
+            <div class="settings-section">
+              <div class="settings-section-title">数据与安全</div>
+              <div class="settings-card">
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">网站凭据管理</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+                <div class="settings-item">
+                  <div class="settings-item-content">
+                    <div class="settings-item-title">清理历史对话</div>
+                    <div class="settings-item-subtitle">816个对话</div>
+                  </div>
+                  <div class="settings-item-arrow">›</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="height:16px; display:flex; align-items:center; justify-content:center; background:#f7f7f7">
+            <div class="home-indicator"></div>
+          </div>
+        </div>
+
+        <!-- B-contacts: 通讯录 -->
+        <div class="view" id="B-contacts">
+          <div class="sbar">
+            <span id="timeB4">12:19</span>
+            <div class="sbar-r"><span>⊘</span><span>📶</span><span>🔋</span></div>
+          </div>
+          <div class="nbar">
+            <div class="nbar-ic" onclick="closeContacts('B')" style="font-size:22px">‹</div>
+            <div class="nbar-tt">通讯录</div>
+            <div class="nbar-right"></div>
+          </div>
+          <div class="contacts-body" id="B-contacts-body"></div>
+        </div>
+
         <!-- 侧边栏 B -->
         <div class="sb-ov" id="B-sb-ov" onclick="toggleSidebar('B')"></div>
         <div class="sidebar" id="B-sidebar">
           <div class="sb-head">
-            <h2>对话</h2>
+            <div class="sb-back-btn" onclick="bGoHomeFromSidebar()">‹</div>
+            <h2>我的话题</h2>
             <div class="sb-add-btn">+</div>
           </div>
-          <div class="sb-search">🔍 搜索对话...</div>
+          <div class="sb-search-row">
+            <div class="sb-search">🔍 搜索对话...</div>
+          </div>
           <div class="sb-list">
             <div class="sb-item pinned" onclick="bGoHomeFromSidebar()">
               <div class="sb-av bot">🤖</div>
               <div class="sb-info">
-                <div class="sb-name">我的助理 <span class="sb-pin">置顶</span></div>
+                <div class="sb-name">玄机 <span class="sb-pin">置顶</span></div>
                 <div class="sb-last">拈花一笑，且问玄机</div>
               </div>
             </div>
           </div>
           <div class="sb-foot">
-            <div class="sb-qr-btn" onclick="openQR('B');toggleSidebar('B')">
-              <div class="sb-qr-ico">⬛</div>我的账号
+            <div class="sb-group-hd" onclick="toggleDeviceGroup('B')">
+              <span class="sb-group-title">我的设备</span>
+              <span class="sb-group-arrow" id="B-device-arrow">›</span>
+            </div>
+            <div class="sb-group-list" id="B-device-list">
+              <div class="sb-device-item" onclick="bOpenContactChat('我的红米')">
+                <div class="sb-device-ico">📱</div>
+                <span class="sb-device-name">我的红米</span>
+              </div>
+              <div class="sb-device-item" onclick="bOpenContactChat('我的 Pad')">
+                <div class="sb-device-ico">📋</div>
+                <span class="sb-device-name">我的 Pad</span>
+              </div>
+              <div class="sb-device-item" onclick="bOpenContactChat('我的汽车')">
+                <div class="sb-device-ico">🚗</div>
+                <span class="sb-device-name">我的汽车</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1019,6 +1806,59 @@ body {
             </div>
             <div class="qr-countdown">剩余有效时间 <span id="B-qr-secs">60</span> 秒</div>
             <button class="qr-btn" onclick="refreshQR('B')">↻ 刷新二维码</button>
+          </div>
+        </div>
+
+        <!-- B 用户信息弹窗 -->
+        <div class="user-info-overlay" id="B-user-info-ov" onclick="closeUserInfo('B')">
+          <div class="user-info-sheet" onclick="event.stopPropagation()">
+            <div class="user-info-hd">
+              <div class="user-info-ttl">用户信息</div>
+              <div class="user-info-cls" onclick="closeUserInfo('B')">✕</div>
+            </div>
+            <div class="user-info-content">
+              <div class="user-info-avatar" id="B-user-info-avatar"></div>
+              <div class="user-info-name" id="B-user-info-name"></div>
+              <div class="user-info-id" id="B-user-info-id"></div>
+            </div>
+            <button class="user-info-delete-btn" id="B-user-info-delete-btn">删除好友</button>
+          </div>
+        </div>
+
+        <!-- B 删除好友确认对话框 -->
+        <div class="delete-confirm-overlay" id="B-delete-confirm-ov" onclick="closeDeleteConfirm('B')">
+          <div class="delete-confirm-dialog" onclick="event.stopPropagation()">
+            <div class="delete-confirm-title">删除好友</div>
+            <div class="delete-confirm-message" id="B-delete-confirm-msg"></div>
+            <div class="delete-confirm-buttons">
+              <button class="delete-confirm-btn cancel" onclick="closeDeleteConfirm('B')">取消</button>
+              <button class="delete-confirm-btn confirm" id="B-delete-confirm-btn">删除</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- B 通讯录操作弹窗 -->
+        <div class="contact-sheet-ov" id="B-contact-sheet" onclick="_hideContactSheet('B')">
+          <div class="contact-sheet" onclick="event.stopPropagation()">
+            <div class="cs-header">
+              <div class="cs-av" id="B-cs-av"></div>
+              <div class="cs-name" id="B-cs-name"></div>
+            </div>
+            <div class="cs-btn" onclick="_doSendMessage()">发消息</div>
+            <div class="cs-btn cs-del" onclick="_doDeleteFriend()">删除好友</div>
+            <div class="cs-cancel" onclick="_hideContactSheet('B')">取消</div>
+          </div>
+        </div>
+
+        <!-- B 删除好友确认 -->
+        <div class="confirm-del-ov" id="B-confirm-del" onclick="_hideConfirmDel('B')">
+          <div class="confirm-del-dlg" onclick="event.stopPropagation()">
+            <div class="cdlg-title">删除好友</div>
+            <div class="cdlg-msg" id="B-cdlg-msg"></div>
+            <div class="cdlg-btns">
+              <button class="cdlg-cancel" onclick="_hideConfirmDel('B')">取消</button>
+              <button class="cdlg-confirm" onclick="_execDeleteFriend()">确认删除</button>
+            </div>
           </div>
         </div>
 
@@ -1101,6 +1941,7 @@ function aHomeInputClick() {
   document.getElementById('A-home-kbd').classList.add('show');
   document.getElementById('A-home-input').focus();
   document.querySelector('#A-home .home-content').classList.add('kopen');
+  document.querySelector('#A-home .home-input').classList.add('kopen-hide');
 }
 
 /* 字母/符号按键输入（含 Shift 逻辑） */
@@ -1149,6 +1990,7 @@ function aHomeSend() {
   inp.value = '';
   document.getElementById('A-home-kbd').classList.remove('show');
   document.querySelector('#A-home .home-content').classList.remove('kopen');
+  document.querySelector('#A-home .home-input').classList.remove('kopen-hide');
   aEnterChat('general', val);
 }
 
@@ -1277,6 +2119,7 @@ function aGoHome() {
   document.getElementById('A-home-kbd').classList.remove('show');
   document.getElementById('A-chat-kbd').classList.remove('show');
   document.querySelector('#A-home .home-content').classList.remove('kopen');
+  document.querySelector('#A-home .home-input').classList.remove('kopen-hide');
   _kbdShifted = false; _updateShift(false); aKbdToAlpha();
   showViews('A-home','B-home');
   closeDI('A'); closeDI('B');
@@ -1367,14 +2210,14 @@ function _aAddFriendFromScan() {
     const aItem = document.createElement('div');
     aItem.className = 'sb-item';
     aItem.id = 'sb-contact-B';
-    aItem.onclick = () => aOpenContactChat('玄机用户·B');
     aItem.innerHTML = `
-      <div class="sb-av usr" style="background:linear-gradient(135deg,#34C759,#28A745);color:#fff">B</div>
-      <div class="sb-info">
+      <div class="sb-av usr" style="background:linear-gradient(135deg,#34C759,#28A745);color:#fff" onclick="event.stopPropagation(); showUserInfo('A', '玄机用户·B', 'user_xuanji_b', 'linear-gradient(135deg,#34C759,#28A745)', 'B')">B</div>
+      <div class="sb-info" onclick="aOpenContactChat('玄机用户·B')">
         <div class="sb-name">玄机用户·B</div>
         <div class="sb-last">刚刚成为好友</div>
       </div>`;
     aList.appendChild(aItem);
+    _wrapSwipe(aItem);
   }
 
   /* 在 B 侧边栏新增「玄机用户·A」入口 */
@@ -1383,14 +2226,14 @@ function _aAddFriendFromScan() {
     const bItem = document.createElement('div');
     bItem.className = 'sb-item';
     bItem.id = 'sb-contact-A';
-    bItem.onclick = () => bOpenContactChat('玄机用户·A');
     bItem.innerHTML = `
-      <div class="sb-av usr" style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);color:#fff">A</div>
-      <div class="sb-info">
+      <div class="sb-av usr" style="background:linear-gradient(135deg,#FF6B6B,#FF8E53);color:#fff" onclick="event.stopPropagation(); showUserInfo('B', '玄机用户·A', 'user_xuanji_a', 'linear-gradient(135deg,#FF6B6B,#FF8E53)', 'A')">A</div>
+      <div class="sb-info" onclick="bOpenContactChat('玄机用户·A')">
         <div class="sb-name">玄机用户·A</div>
         <div class="sb-last">刚刚成为好友</div>
       </div>`;
     bList.appendChild(bItem);
+    _wrapSwipe(bItem);
   }
 }
 
@@ -1473,6 +2316,76 @@ function aOpenContactChat(name) {
     msgs.appendChild(row);
   });
   msgs.scrollTop = msgs.scrollHeight;
+}
+
+function aBackToSidebar(pid) {
+  showViews('A-home', 'B-home');
+  document.getElementById(pid + '-sb-ov').classList.add('show');
+  document.getElementById(pid + '-sidebar').classList.add('show');
+}
+
+/* ══════════ 用户信息弹窗 ══════════ */
+let _currentUserInfo = { pid: '', userName: '', userId: '', avatarStyle: '', avatarText: '' };
+
+function showUserInfo(pid, userName, userId, avatarStyle, avatarText) {
+  _currentUserInfo = { pid, userName, userId, avatarStyle, avatarText };
+  
+  const avatar = document.getElementById(pid + '-user-info-avatar');
+  const name = document.getElementById(pid + '-user-info-name');
+  const id = document.getElementById(pid + '-user-info-id');
+  const deleteBtn = document.getElementById(pid + '-user-info-delete-btn');
+  
+  if (avatar) {
+    avatar.style.background = avatarStyle;
+    avatar.textContent = avatarText;
+  }
+  if (name) name.textContent = userName;
+  if (id) id.textContent = 'ID: ' + userId;
+  
+  if (deleteBtn) {
+    deleteBtn.onclick = () => showDeleteConfirm(pid, userName);
+  }
+  
+  document.getElementById(pid + '-user-info-ov').classList.add('show');
+}
+
+function closeUserInfo(pid) {
+  document.getElementById(pid + '-user-info-ov').classList.remove('show');
+}
+
+function showDeleteConfirm(pid, userName) {
+  const msg = document.getElementById(pid + '-delete-confirm-msg');
+  const confirmBtn = document.getElementById(pid + '-delete-confirm-btn');
+  
+  if (msg) msg.textContent = `确定要删除好友"${userName}"吗？删除后将无法再与对方的助理对话。`;
+  if (confirmBtn) {
+    confirmBtn.onclick = () => confirmDeleteFriend(pid, userName);
+  }
+  
+  document.getElementById(pid + '-delete-confirm-ov').classList.add('show');
+}
+
+function closeDeleteConfirm(pid) {
+  document.getElementById(pid + '-delete-confirm-ov').classList.remove('show');
+}
+
+function confirmDeleteFriend(pid, userName) {
+  closeDeleteConfirm(pid);
+  closeUserInfo(pid);
+  
+  // 从侧边栏移除该好友
+  const sidebar = document.getElementById(pid + '-sidebar');
+  const items = sidebar.querySelectorAll('.sb-item');
+  items.forEach(item => {
+    const nameEl = item.querySelector('.sb-name');
+    if (nameEl && nameEl.textContent.includes(userName)) {
+      item.remove();
+    }
+  });
+  
+  // 显示删除成功提示
+  openDI(pid, '✓', 'linear-gradient(135deg,#34C759,#28A745)', 
+    '删除成功', `已删除好友"${userName}"`, 3000);
 }
 
 /* ══════════ B 端 ══════════ */
@@ -1613,11 +2526,294 @@ function _startQRTimer(pid) {
   }, 1000);
 }
 
+/* ══════════ 通讯录 ══════════ */
+function openContacts(pid) {
+  document.getElementById(pid + '-sb-ov').classList.remove('show');
+  document.getElementById(pid + '-sidebar').classList.remove('show');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById(pid + '-contacts').classList.add('on');
+  document.getElementById(pid === 'A' ? 'B-home' : 'A-home').classList.add('on');
+  _buildContactsList(pid);
+}
+
+function closeContacts(pid) {
+  showViews(pid === 'A' ? 'A-home' : 'B-home', 'B-home');
+}
+
+function _buildContactsList(pid) {
+  const body = document.getElementById(pid + '-contacts-body');
+  body.innerHTML = '';
+  const items = [...document.querySelectorAll('#' + pid + '-sidebar .sb-list .sb-item:not(.pinned)')];
+
+  const title = document.createElement('div');
+  title.className = 'contacts-sec-title';
+  title.textContent = items.length ? `好友（${items.length}）` : '好友';
+  body.appendChild(title);
+
+  if (items.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'contacts-empty';
+    empty.textContent = '暂无好友，扫码添加吧 👋';
+    body.appendChild(empty);
+    return;
+  }
+
+  items.forEach(item => {
+    const avEl   = item.querySelector('.sb-av');
+    const nameEl = item.querySelector('.sb-name');
+    const lastEl = item.querySelector('.sb-last');
+    const name   = nameEl ? nameEl.childNodes[0].textContent.trim() : '';
+    const sub    = lastEl ? lastEl.textContent.trim() : '';
+    const avStyle = avEl ? (avEl.getAttribute('style') || 'background:#e8e8e8;color:#555') : '';
+    const avText  = avEl ? avEl.textContent.trim() : '';
+
+    const row = document.createElement('div');
+    row.className = 'contact-row';
+    row.innerHTML = `
+      <div class="contact-av" style="${avStyle}">${avText}</div>
+      <div>
+        <div class="contact-name">${name}</div>
+        <div class="contact-sub">${sub}</div>
+      </div>`;
+    row.onclick = () => _showContactSheet(pid, name, avStyle, avText);
+    body.appendChild(row);
+  });
+}
+
+/* ══════════ 设置页 ══════════ */
+function openSettings(pid) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById(pid + '-settings').classList.add('on');
+  document.getElementById(pid === 'A' ? 'B-home' : 'A-home').classList.add('on');
+}
+
+function closeSettings(pid) {
+  showViews(pid === 'A' ? 'A-home' : 'B-home', 'B-home');
+}
+
+function _openContactFromContacts(pid, name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  if (pid === 'A') {
+    document.getElementById('A-ext-chat').classList.add('on');
+    document.getElementById('B-home').classList.add('on');
+    document.getElementById('A-ext-title').textContent = name;
+    const msgs = document.getElementById('A-ext-msgs');
+    msgs.innerHTML = '';
+    (_contactChats[name] || []).forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'mrow' + (m.who === 'me' ? ' me' : '');
+      row.innerHTML = `<div class="mav" style="background:${m.color};color:${m.tc}">${m.av}</div><div class="bbl">${m.text}</div>`;
+      msgs.appendChild(row);
+    });
+    msgs.scrollTop = msgs.scrollHeight;
+  } else {
+    document.getElementById('B-ext-chat').classList.add('on');
+    document.getElementById('A-ext-chat').classList.add('on');
+    document.getElementById('B-ext-title').textContent = name;
+    document.getElementById('B-ext-msgs').innerHTML = '';
+  }
+}
+
+/* 通讯录操作弹窗 */
+let _sheetTarget = { pid: null, name: null };
+
+function _showContactSheet(pid, name, avStyle, avText) {
+  _sheetTarget = { pid, name };
+  const avEl   = document.getElementById(pid + '-cs-av');
+  const nameEl = document.getElementById(pid + '-cs-name');
+  avEl.setAttribute('style', avStyle);
+  avEl.textContent = avText;
+  nameEl.textContent = name;
+  document.getElementById(pid + '-contact-sheet').classList.add('show');
+}
+
+function _hideContactSheet(pid) {
+  document.getElementById(pid + '-contact-sheet').classList.remove('show');
+}
+
+function _doSendMessage() {
+  const { pid, name } = _sheetTarget;
+  _hideContactSheet(pid);
+  _openContactFromContacts(pid, name);
+}
+
+function _doDeleteFriend() {
+  const { pid, name } = _sheetTarget;
+  _hideContactSheet(pid);
+  document.getElementById(pid + '-cdlg-msg').textContent = `确认要删除好友「${name}」吗？删除后聊天记录也将同步移除。`;
+  document.getElementById(pid + '-confirm-del').classList.add('show');
+}
+
+function _hideConfirmDel(pid) {
+  document.getElementById(pid + '-confirm-del').classList.remove('show');
+}
+
+function _execDeleteFriend() {
+  const { pid, name } = _sheetTarget;
+  _hideConfirmDel(pid);
+
+  /* 从侧边栏删除（支持 sb-item-wrap 包裹） */
+  document.querySelectorAll('#' + pid + '-sidebar .sb-list .sb-item:not(.pinned)').forEach(item => {
+    const nameEl = item.querySelector('.sb-name');
+    if (nameEl && nameEl.childNodes[0].textContent.trim() === name) {
+      const wrap = item.closest('.sb-item-wrap') || item;
+      wrap.remove();
+    }
+  });
+
+  /* 刷新通讯录列表 */
+  _buildContactsList(pid);
+}
+
+/* ══════════ 左滑删除 ══════════ */
+const _DEL_W = 72;
+let _swipedWrap = null;
+let _mDrag = null; /* 全局鼠标拖拽状态（避免重复绑定 document） */
+
+function _closeSwipedWrap() {
+  if (!_swipedWrap) return;
+  const it = _swipedWrap.querySelector('.sb-item');
+  if (it) { it.style.transition = 'transform .22s ease'; it.style.transform = ''; }
+  _swipedWrap.dataset.swOpen = '';
+  _swipedWrap = null;
+}
+
+function _snapSwipe(item, wrap, open) {
+  item.style.transition = 'transform .22s ease';
+  item.style.transform = open ? `translateX(${-_DEL_W}px)` : '';
+  wrap.dataset.swOpen = open ? '1' : '';
+  if (open) _swipedWrap = wrap;
+  else if (_swipedWrap === wrap) _swipedWrap = null;
+}
+
+/* 全局鼠标移动 / 抬起（统一处理，避免 _wrapSwipe 重复注册） */
+document.addEventListener('mousemove', e => {
+  const d = _mDrag; if (!d) return;
+  const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+  if (!d.locked) {
+    if (Math.abs(dy) > Math.abs(dx) + 3) { _mDrag = null; return; }
+    if (Math.abs(dx) < 4) return;
+    d.locked = true;
+  }
+  const x = Math.max(-_DEL_W, Math.min(0, d.off + dx));
+  d.item.style.transition = 'none';
+  d.item.style.transform = x ? `translateX(${x}px)` : '';
+});
+document.addEventListener('mouseup', e => {
+  const d = _mDrag; if (!d) return; _mDrag = null;
+  _snapSwipe(d.item, d.wrap, d.locked ? (e.clientX - d.sx) < -20 : !!d.wrap.dataset.swOpen);
+  if (d.locked) {
+    /* 拦截紧接其后的 click，防止鼠标拖出侧边栏后触发遮罩关闭 */
+    document.addEventListener('click', ev => ev.stopPropagation(), { capture: true, once: true });
+  }
+});
+document.addEventListener('click', e => {
+  if (_swipedWrap && !_swipedWrap.contains(e.target)) _closeSwipedWrap();
+});
+
+function _wrapSwipe(item) {
+  if (!item || item.classList.contains('pinned')) return;
+  if (item.parentElement && item.parentElement.classList.contains('sb-item-wrap')) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'sb-item-wrap';
+  item.parentNode.insertBefore(wrap, item);
+  wrap.appendChild(item);
+
+  /* 删除按钮 */
+  const btn = document.createElement('div');
+  btn.className = 'sb-del-btn';
+  btn.textContent = '删除';
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const h = wrap.offsetHeight;
+    wrap.style.overflow = 'hidden';
+    wrap.style.maxHeight = h + 'px';
+    wrap.style.transition = 'max-height .25s ease, opacity .2s ease';
+    requestAnimationFrame(() => { wrap.style.maxHeight = '0'; wrap.style.opacity = '0'; });
+    setTimeout(() => wrap.remove(), 280);
+    if (_swipedWrap === wrap) _swipedWrap = null;
+  });
+  wrap.appendChild(btn);
+
+  /* 触摸事件 */
+  let sx = 0, sy = 0, off = 0, active = false, locked = false;
+  item.addEventListener('touchstart', e => {
+    _closeSwipedWrap();
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+    off = wrap.dataset.swOpen ? -_DEL_W : 0;
+    active = true; locked = false;
+  }, {passive: true});
+  item.addEventListener('touchmove', e => {
+    if (!active) return;
+    const dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
+    if (!locked) {
+      if (Math.abs(dy) > Math.abs(dx) + 3) { active = false; return; }
+      if (Math.abs(dx) < 4) return;
+      locked = true;
+    }
+    e.preventDefault(); /* 阻止滚动，同时阻止手势结束后合成 click 传到遮罩层 */
+    const x = Math.max(-_DEL_W, Math.min(0, off + dx));
+    item.style.transition = 'none';
+    item.style.transform = x ? `translateX(${x}px)` : '';
+  }, {passive: false});
+  item.addEventListener('touchend', e => {
+    if (!active) return; active = false;
+    if (locked) e.preventDefault(); /* 阻止合成 click，防止遮罩层收起侧边栏 */
+    _snapSwipe(item, wrap, locked ? (e.changedTouches[0].clientX - sx) < -20 : !!wrap.dataset.swOpen);
+  });
+
+  /* 鼠标事件（桌面预览用） */
+  item.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    _closeSwipedWrap();
+    _mDrag = { item, wrap, sx: e.clientX, sy: e.clientY, off: wrap.dataset.swOpen ? -_DEL_W : 0, locked: false };
+    e.preventDefault();
+  });
+}
+
+function initAllSwipe() {
+  document.querySelectorAll('#A-sidebar .sb-list .sb-item, #B-sidebar .sb-list .sb-item')
+    .forEach(item => _wrapSwipe(item));
+}
+initAllSwipe();
+
+/* ══════════ Tab Bar ══════════ */
+function switchTab(pid, tab) {
+  ['chat','agent','files'].forEach(t => {
+    const ti = document.getElementById(pid + '-ti-' + t);
+    const tp = document.getElementById(pid + '-panel-' + t);
+    if (ti) ti.classList.toggle('active', t === tab);
+    if (tp) tp.classList.toggle('active', t === tab);
+  });
+  /* 切离对话 tab 时关闭键盘 */
+  if (tab !== 'chat' && pid === 'A') {
+    const kbd = document.getElementById('A-home-kbd');
+    if (kbd) kbd.classList.remove('show');
+    document.querySelector('#A-home .home-content')?.classList.remove('kopen');
+    document.querySelector('#A-home .home-input')?.classList.remove('kopen-hide');
+  }
+}
+
+/* 从联系人对话页切换 Tab，先回首页再切换 */
+function exitChatToTab(pid, tab) {
+  showViews('A-home', 'B-home');
+  switchTab(pid, tab);
+}
+
 /* 时间 */
+/* ── 设备分组折叠 ── */
+function toggleDeviceGroup(pid) {
+  const list  = document.getElementById(pid + '-device-list');
+  const arrow = document.getElementById(pid + '-device-arrow');
+  const open  = list.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open', open);
+}
+
 function liveTime() {
   const now = new Date();
   const t = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-  ['timeA','timeA2','timeB','timeB2'].forEach(id => setTime(id,t));
+  ['timeA','timeA2','timeA4','timeB','timeB2','timeB4'].forEach(id => setTime(id,t));
 }
 liveTime();
 setInterval(liveTime, 30000);
